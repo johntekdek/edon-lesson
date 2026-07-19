@@ -4,7 +4,7 @@ baseline_commit: 473b7531b08c2ee00be94d5a6ab9b0fce1a5952a
 
 # Story 1.1: Lesson Script Schema v1.0 Package
 
-Status: review
+Status: done
 
 ## Story
 
@@ -204,6 +204,7 @@ claude-fable-5 (Claude Fable 5)
 ### Change Log
 
 - 2026-07-19: Implemented Story 1.1 — /schema package: JSON Schema 2020-12 documents (envelope + shared defs + six block types), 19-fixture corpus + expectations manifest, ajv (js/ESM) and jsonschema (py) validator wrappers with identical `validate()` semantics, renderer/versioning/reserved-extensions docs, minimal monorepo bootstrap (npm workspaces root, py package, GitHub Actions workflow).
+- 2026-07-19: External review passed; all seven fix-pass assumptions confirmed by stakeholder (incl. UNLICENSED). Story marked done and merged. Carry-forward recorded on Story 3.7: "Published Version contains ≥ 1 block" is a publish-time invariant (not a schema rule — drafts start empty by design).
 - 2026-07-19: Review fix pass (stakeholder-approved batches A/B/D/E + C rulings): regex engine parity (ASCII `[0-9]`, `re.fullmatch`, `(?!\n)$` schema-pattern guards — probes `"2.0\n"`, `"1.0\n"`, Arabic-Indic digits now reject identically in both languages); ajv if/then error-cascade filtered (error payloads now path-identical across languages, one error per invalid fixture); py schemas ship as package data with byte-equality drift test (non-editable install proven); js package marked private/UNLICENSED; uniqueness enforcement in both wrappers' referential layer (block ids / question ids per quiz / option ids per question) with fixtures; question-type closed-set rule recorded in versioning.md; `assetRef.ref` tightened to `^asset://.+`; expectations manifest carries per-fixture expected error path+message asserted in both suites; fixture-directory parity test; CI `permissions: contents: read` + dependency caching; `.gitignore` build/. Corpus now 27 fixtures; js 35 tests, py 36 tests, all green.
 
 ### File List

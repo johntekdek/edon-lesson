@@ -686,7 +686,8 @@ So that Students only ever receive what I approved.
 **When** the publish job runs
 **Then** its stages execute progress-visibly: revalidate → pre-publish checks → TTS stage (a no-op passthrough until Story 3.8 lands — sign-off 2026-07-18) → asset freeze into the immutable `lessons/{lesson_id}/v{n}/` prefix with `manifest.json` (hashes, sizes, licence metadata) → one final transaction asserting the checked `revision` is unchanged (AD-5, AD-9)
 **And** publish requires `If-Match: revision`; a moved Draft yields `409 draft_changed_since_review` and the checks re-run (AD-23)
-**And** the app DB role has no UPDATE/DELETE grant on `published_versions` — proven by a test attempting mutation (FR-11).
+**And** the app DB role has no UPDATE/DELETE grant on `published_versions` — proven by a test attempting mutation (FR-11)
+**And** the revalidate stage enforces that a Published Version contains **at least one block** — a publish-time invariant, deliberately NOT a schema rule: Drafts start empty by design (carried forward from the Story 1.1 review, stakeholder-recorded 2026-07-19).
 
 **Given** the Publish dialog
 **When** checks run

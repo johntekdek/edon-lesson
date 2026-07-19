@@ -1,5 +1,5 @@
 # generated: 2026-07-18
-# last_updated: 2026-07-18
+# last_updated: 2026-07-19
 # project: 2027_edon_sim_pro
 # project_key: NOKEY
 # tracking_system: file-system
@@ -62,7 +62,7 @@ story_location: "{project-root}/_bmad-output/implementation-artifacts"
 development_status:
   # ===== Epic 1: Lesson Script Schema & Platform Foundation (M1) =====
   epic-1: in-progress
-  1-1-lesson-script-schema-v1-0-package: review
+  1-1-lesson-script-schema-v1-0-package: done
   1-2-monorepo-scaffold-ci-gates-and-deploy-skeleton: backlog
   1-3-tenant-substrate-tenantcontext-rls-migrations-baseline: backlog
   1-4-identity-credentials-five-kinds-plus-dev-token-cli: backlog
