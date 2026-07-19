@@ -22,7 +22,7 @@ Two economic/quality invariants shape every implementation decision:
 ## 3. LLM and Inference Policy
 
 - **[HARD] All model access goes through a single provider-agnostic adapter** exposing an OpenAI-compatible chat-completions interface. No service calls a vendor SDK directly; no model identifier, endpoint, or API version is hardcoded anywhere outside configuration.
-- **Per-workload model configuration.** Config defines a model (provider, model ID, endpoint, parameters) per workload key: `lesson_generation`, `simulation_generation`, `diagram_generation`, `embeddings`. Workloads may point at different providers simultaneously.
+- **Per-workload model configuration.** Config defines a model (provider, model ID, endpoint, parameters) per workload key: `lesson_generation`, `simulation_generation`, `diagram_generation`, `embeddings`, and `tts` (added by stakeholder amendment 2026-07-18 — publish-time narration audio via the adapter's OpenAI-compatible speech surface; same telemetry, budget, and config discipline as every workload). Workloads may point at different providers simultaneously.
 - **Launch configuration (subject to ADR-002 benchmark):**
   - `lesson_generation`, `simulation_generation`: current frontier API model (benchmark the leading tier on the actual pipeline; do not default to GPT-4o out of habit).
   - `diagram_generation`: mini/small-tier API model with structured-output support.
@@ -72,7 +72,7 @@ Two economic/quality invariants shape every implementation decision:
 
 ## 9. Architecture Decisions (extension, 2026-07-17)
 
-> Appended by the Architect at the end of Architecture Creation, per the status line above. Additive only; no rule above is weakened. **Pending stakeholder sign-off of the architecture run 2026-07-17** — treat as binding once signed off. Rationale lives in `/docs/adr` and the architecture spine (`_bmad-output/planning-artifacts/architecture/architecture-2027_edon_sim_pro-2026-07-17/ARCHITECTURE-SPINE.md`), which downstream workflows consume alongside this file.
+> Appended by the Architect at the end of Architecture Creation, per the status line above. Additive only; no rule above is weakened. **Signed off by the stakeholder 2026-07-18 — binding.** Rationale lives in `/docs/adr` and the architecture spine (`_bmad-output/planning-artifacts/architecture/architecture-2027_edon_sim_pro-2026-07-17/ARCHITECTURE-SPINE.md`), which downstream workflows consume alongside this file.
 
 **ADR index (decisions of record):**
 - **ADR-001 — FastAPI** (0.139.x, uvicorn, Pydantic v2) for the single backend deployable + workers; Flask remains the team default outside this repo.
@@ -100,3 +100,13 @@ Two economic/quality invariants shape every implementation decision:
 - The SVG sanitiser allowlist preserves `<title>`, `<desc>`, `role="img"`, `aria-label`, `aria-labelledby`; Lesson Script Schema v1.0 carries `altText`/`longDescription` for Diagram Blocks and Model3D/Simulation posters.
 - Policy numbers (quotas, budgets, lifetimes, size budgets) are config, never code constants; `budgets.json` is the single budget source consumed by CI and validators.
 - Platform API stays LMS-agnostic (Moodle knowledge only in `mod_edonlesson`); integration contracts live in `/docs/integrations` and change only via work items.
+
+**Stakeholder amendments folded in at sign-off (2026-07-18):**
+- **Device posture (supersedes the OQ-16-derived posture):** Showcase/Full is the canonical default experience — modern smartphones with reliable connectivity assumed; auto-load default, tap-to-load only under explicit data-saver signals; Player webfonts standard; the Floor tier is thin best-effort fallback and the low-spec CI profile is advisory, not blocking (spine AD-11).
+- **Voiced lessons:** publish-time neural TTS behind the NarrationProvider seam (`tts` workload, §3); audio stored as static lesson assets — per-lesson cost, zero per-student cost; text always the primary modality. Republish regenerates only changed audio.
+- **Live Q&A:** the existing block_edon_ai chat, course-scoped, presented with the lesson activity (WI-CHAT-4) — no new inference economics; NFR-9 unchanged.
+- **V2 reserved-extensions record** (do not design/build): dialogue Block types (`teacher_turn`, `classmate_turn`), AI Teacher persona/avatar, scripted classmate moments. Still V3: reactive multi-agent behaviour, adaptive replanning, streaming delivery. Clean-room, generate-once, and the review gate reaffirmed untouched.
+- **OQ-5:** template-library simulations are the launch default regardless of benchmark outcome; free-code activates behind the tenant flag only after ADR-002's ≥ 70% gate; the template seed set is a first-class deliverable.
+- **edon-rag contract v1.1:** retrieval is course-scoped (`POST /api/courses/{moodle_course_id}/retrieve`, `x-api-key` auth); **WI-RAG-0 (Critical)** — the retrieval endpoint does not exist in production and must be built edon-rag-side; it blocks the generation epics' live-retrieval slice (recorded fixtures unblock development).
+- **Release shape:** single full-MVP release through milestone gates M1–M6 (TTS in M2; production-theme Player-isolation verification in M3; chat embed in M4; Model3D blocked on the ≥ 20-model curated seed library in M5), each gate ending in a private pilot-college preview; launch = sponsored pilot of ≤ 5 colleges.
+- **Moodle surfaces:** all mod_edonlesson-rendered surfaces use standard Moodle renderers/output APIs (theme-inherited, zero per-school customization); the embedded Player stays style-isolated per the Embedding Contract (WI-MOD-0).

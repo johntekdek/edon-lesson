@@ -1,6 +1,6 @@
 # ADR-012: Object Storage and Published-Asset Self-Containment
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 project-context §2: object storage for lesson assets with tenant-scoped path prefixes. V3 seam (e): published-lesson assets static and self-containable (offline/SCORM export a cheap fast-follow). Single-VPS launch; no AGPL runtime dependencies (§5 — which rules out MinIO as the default choice).

@@ -1,6 +1,6 @@
 # ADR-008: Tenant Isolation Enforcement
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 I-4 / project-context §4 [HARD]: every query, cache key, asset path, log line, and quota is Tenant-scoped; no cross-tenant path exists, including in admin tooling, outside explicit operator-role endpoints. ~60 tenants, one deployment.

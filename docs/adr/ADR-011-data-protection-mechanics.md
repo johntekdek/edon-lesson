@@ -1,6 +1,6 @@
 # ADR-011: Data Protection Mechanics (NFR-9)
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 NFR-9/OQ-8: identity-stripped LLM requests; pseudonymised telemetry preserving [HARD] tenant/user attribution; configurable log retention (default 12 months); record of external processors. A-15: minimum Student identifiers, no extra PII.

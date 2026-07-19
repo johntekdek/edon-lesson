@@ -1,6 +1,6 @@
 # ADR-001: Backend Framework — FastAPI
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 **Reserved by:** project-context.md §2/§8; brief §9; PRD addendum §1.
 
 ## Context

@@ -45,8 +45,24 @@ Generate-once is the load-bearing economic principle; per-interaction spend is c
 - Student Player: low-spec Android as a first-class design target; poster-fallback states are designed states, not error states.
 - Diagram chat experience rides the existing block_edon_ai chat surface; quota/rate-limit messaging needs humane copy (PRD SM-C3 watches denial rates).
 
-## 4. Deliberately Not in the PRD
+## 4. Deliberately Not in the PRD (original)
 
 - Tech stack, deployment, testing standards, repo conventions: `project-context.md` §§2, 7–8 (authoritative). Architecture principles (§6) are reflected in the PRD at capability level only; their build-rule form remains authoritative in project-context.
 - Clean-room/licensing rules: `project-context.md` §5 [HARD]; restated in PRD NFR-7 only at capability level.
 - Model/provider specifics and migration path: `project-context.md` §3 + §1 of this addendum.
+
+## 5. Post-Architecture Stakeholder Amendments (2026-07-18)
+
+Recorded at architecture sign-off; these are stakeholder-approved amendments binding on all downstream work. The architecture spine (AD-1..AD-24) and ADR-001..014 carry the mechanics.
+
+**FR amendments (approved additions to MVP scope):**
+- **Voiced AI Lessons — pre-generated neural TTS.** Narration audio is generated at publish time behind the Player's NarrationProvider seam (`tts` workload key, `project-context.md` §3; full Cost Telemetry). Audio is stored as static lesson assets — per-lesson cost at publish, zero per-student cost (I-1 intact); republish regenerates only changed audio; **text remains the always-available primary modality** and no user-facing promise is made that audio is universally available.
+- **Live Q&A — embedded course-scoped chat.** The lesson activity page presents the existing block_edon_ai chat, scoped to the launch course (work item WI-CHAT-4). No new inference economics; NFR-9 identity-stripping unchanged.
+- **Reserved for V2** (record only — do not design or build): dialogue Block types (`teacher_turn`, `classmate_turn`), the AI Teacher persona/avatar, scripted AI-classmate moments — the named V2 headline. Explicitly still V3: reactive live multi-agent behaviour, adaptive replanning, streaming delivery. Clean-room, generate-once, and the Review Gate are reaffirmed untouched.
+
+**Device-posture realignment (supersedes the OQ-16 ruling in part):** Students are assumed on modern smartphones with reliable connectivity. Showcase/Full is the canonical default experience; auto-load is the default (tap-to-load only under explicit data-saver signals); Player webfonts are standard. The Floor tier is retained as thin best-effort fallback (poster paths and durability rules survive — they also serve flag-off states and future offline export) but no longer gates launch; the low-spec CI profile is advisory. Asset budgets raised per spine AD-11.
+
+**Other ratifications recorded here:**
+- **A-8 upgraded:** per-Block generation progress (`job_progress` events) is required, stakeholder-approved scope (spine AD-24).
+- **Release shape:** single full-MVP release through internal milestone gates M1–M6, each ending in a private pilot-college preview; launch = sponsored/paid pilot of ≤ 5 colleges; 60-college scale post-pilot (spine § Release & milestones).
+- **Brief errata (the brief stays unedited as a historical artifact):** brief §5.12's client-side-scoring wording is superseded by OQ-14 (server-authoritative re-scoring, FR-15); brief FR-B.7's "block-level regeneration desirable" is superseded by OQ-3 (committed for Diagram/Model3D/Simulation, FR-10).

@@ -2,7 +2,7 @@
 title: e-DON Lesson Studio
 status: final
 created: 2026-07-07
-updated: 2026-07-07
+updated: 2026-07-18
 ---
 
 # PRD: e-DON Lesson Studio
@@ -411,7 +411,7 @@ The Operator can configure, per Tenant: LLM Budget Ceilings, generation Quotas, 
 
 #### FR-27: Structured Events and Cost Telemetry
 
-The platform logs Structured Events — lesson generated / generation failed / draft discarded / published / started / completed, quiz submitted, diagram requested / diagram served from cache / diagram reported, Sanitisation failure, Rate Limit or Quota rejection, writeback failure and retry — sufficient to power a future analytics dashboard, and Cost Telemetry on every LLM call: tokens in/out, computed cost, Tenant, user, workload, cache hit/miss, latency. All logs carry Tenant and user identifiers (a known gap in existing edon-rag query logs; not repeated here). *(Source: brief §5.24; `project-context.md` §3 [HARD].)* `[ASSUMPTION: this event list is canonical and extends the brief's six events with the failure/rejection events the PRD's own FRs and metrics require (FR-10, FR-20, FR-23, SM-2, SM-C3).]`
+The platform logs Structured Events — lesson generated / generation failed / draft discarded / published / started / completed, quiz submitted, diagram requested / diagram served from cache / diagram reported / diagram review completed / diagram invalidated (cache evicted), Sanitisation failure, Rate Limit or Quota rejection, writeback failure and retry, writeback overdue, operator action, cost alert *(the last five ratified as taxonomy extensions at architecture sign-off, 2026-07-18; spine AD-7 is the canonical list)* — sufficient to power a future analytics dashboard, and Cost Telemetry on every LLM call: tokens in/out, computed cost, Tenant, user, workload, cache hit/miss, latency. All logs carry Tenant and user identifiers (a known gap in existing edon-rag query logs; not repeated here). *(Source: brief §5.24; `project-context.md` §3 [HARD].)* `[ASSUMPTION: this event list is canonical and extends the brief's six events with the failure/rejection events the PRD's own FRs and metrics require (FR-10, FR-20, FR-23, SM-2, SM-C3).]`
 
 **Consequences (testable):**
 - Every listed product action emits a Structured Event with Tenant and user identifiers; this FR's event list is the single canonical taxonomy — an event referenced anywhere in this PRD appears here.
@@ -518,7 +518,7 @@ Everything in §8, unchanged. Deferral horizons per the brief: multi-agent class
 
 ## 12. Open Questions and Resolutions
 
-*Stakeholder decisions dated 2026-07-07 resolved OQ-1–OQ-4 and OQ-8–OQ-17; the requirements they produced are folded into §§3–11 and marked "stakeholder decision". One-line records below preserve the OQ IDs downstream references use; the full decision text is in `.memlog.md`. Four questions remain open, each owned by a later phase.*
+*Stakeholder decisions dated 2026-07-07 resolved OQ-1–OQ-4 and OQ-8–OQ-17; the requirements they produced are folded into §§3–11 and marked "stakeholder decision". One-line records below preserve the OQ IDs downstream references use; the full decision text is in `.memlog.md`. The remaining four (OQ-5/6/7/18) were resolved in the UX and architecture phases — pointers below, updated 2026-07-18.*
 
 **Resolved (stakeholder decisions, 2026-07-07)**
 1. **OQ-1 — RESOLVED:** cost governance as tunable config: $2 soft-alert per Lesson generation; per-Tenant monthly budgets Operator-set (SM-4, FR-26). Cost-attribution (A-24), p90/concurrency (A-34), and counter-metric triggers (A-32) approved.
@@ -536,11 +536,13 @@ Everything in §8, unchanged. Deferral horizons per the brief: multi-agent class
 13. **OQ-16 — RESOLVED:** device floor — mixed fleet including ~1.5–2 GB RAM, Android 8-era hardware, outdated WebViews; encoded as strict Player bundle-size budget, required poster fallback (Model3D/Simulation, including no-WebGL), aggressively throttled CI low-spec profile (FR-18, NFR-2).
 14. **OQ-17 — RESOLVED:** diagram governance bundle accepted — mandatory grounding in the prompt, visible "AI-generated — verify against your course materials" label, Student report/flag control feeding a Teacher review queue, telemetry-sampled spot checks (FR-28).
 
-**Still open — owned by later phases**
-15. **OQ-5 — Simulation mode decision point:** criteria and timing for choosing free-coded Simulations vs. the parameterised template library (Risk §11), given both modes must be designable. Owner: Architect + stakeholder, during architecture.
-16. **OQ-6 — Curated Model Library seeding:** launch size, subject coverage, and who curates (FR-16). Owner: stakeholder, before Model3D stories.
-17. **OQ-7 — Accessibility target:** the brief sets no accessibility requirement. Adopting one (e.g., a WCAG level for Player and Authoring UI) would be a scope addition — requires explicit confirmation. Owner: stakeholder, before UX.
-18. **OQ-18 — Adoption/usage metric:** the SM set validates the supply side only; administrators are promised "evidence of usage" and FR-27 logs the needed events. Add an adoption/completion SM? A metric addition needing confirmation. Owner: stakeholder, before launch.
+**Resolved in later phases (pointers added 2026-07-18 — all 18 OQs now closed)**
+15. **OQ-5 — RESOLVED (architecture sign-off, 2026-07-18):** dual-mode Simulation schema (`template | freecode`, one sandbox + protocol); **template library is the launch default regardless of benchmark outcome**; free-code activates behind a tenant flag only after clearing the ≥ 70% automated-check gate (ADR-002/ADR-007); the template seed set is a first-class deliverable.
+16. **OQ-6 — RESOLVED (stakeholder, 2026-07-18):** Model3D stories are blocked until a curated seed library of ≥ 20 models across 2–3 NCE science subjects exists; the stakeholder is the initial curator; licence metadata mandatory (`project-context.md` §5).
+17. **OQ-7 — RESOLVED (UX ruling, 2026-07-17):** WCAG 2.1 AA adopted, scoped — full AA on controlled surfaces; AI-generated content governed by the text-alternative contract + best-effort (EXPERIENCE.md § Rulings & Open Items, item 1).
+18. **OQ-18 — RESOLVED (stakeholder, 2026-07-18):** adoption metric adopted — **% of Published lessons with ≥ 1 Student completion within 30 days of publication**, computed from existing FR-27 events; no new instrumentation.
+
+*Note (2026-07-18): the OQ-16 device-floor ruling is superseded in part by the stakeholder realignment recorded in `addendum.md` §5 — modern-device canonical posture; the floor becomes best-effort fallback.*
 
 ## 13. Assumptions Index
 

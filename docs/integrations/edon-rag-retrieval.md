@@ -1,27 +1,34 @@
-# External Interface: edon-rag Retrieval API (v1)
+# External Interface: edon-rag Retrieval API (v1.1)
 
-**Status:** draft — pending stakeholder sign-off of the architecture run 2026-07-17
-**System:** edon-rag (existing production RAG backend — FastAPI, PostgreSQL + pgvector, Ollama `nomic-embed-text`, multi-tenant, per-tenant API keys)
-**Posture:** edon-rag is an external system consumed **by API only**. This document specifies the contract **this platform requires**, versioned as interface `v1`. Any capability listed under *Integration Work Items* is a gap to be negotiated with the edon-rag owners as explicit work — never an assumed edit to edon-rag. Changes to what we need bump this document's version.
+**Status:** final (stakeholder sign-off 2026-07-18)
+**System:** edon-rag (existing production RAG backend — FastAPI, PostgreSQL + pgvector, Ollama `nomic-embed-text`, multi-tenant, per-tenant API keys; deployed API version **v2.0.0**, reconciled against its captured `openapi.json` by the stakeholder, 2026-07-18)
+**Posture:** edon-rag is an external system consumed **by API only**. This document specifies the contract **this platform requires**. Capabilities listed under *Integration Work Items* are gaps to be built on the edon-rag side as explicit, ticketed work — never assumed edits. v1.1 supersedes v1 (which assumed a tenant-wide retrieval endpoint and Bearer auth; both corrected below).
 
-## 1. Consumers and purposes
+## 1. Reconciliation summary (v1 → v1.1)
 
-| Platform consumer | Purpose | PRD anchor |
+| # | Finding from the deployed `openapi.json` (v2.0.0) | Contract consequence |
 | --- | --- | --- |
-| Generation pipeline (plan + per-Block stages) | Retrieve Grounding Chunks for lesson generation, Tenant-scoped | FR-4, FR-6 |
-| Diagram service | Retrieve Grounding Chunks for Student Diagram Requests (mandatory grounding) | FR-19, FR-28 |
+| 1 | **No retrieval-only endpoint exists.** The only query surface is the chat pipeline (`POST /api/courses/{id}/query`), which generates an answer — unusable for grounding (it spends chat-pipeline inference and returns prose, not ranked chunks). | **WI-RAG-0 (Critical, blocks generation epics):** a raw-retrieval endpoint must be built edon-rag-side. Specified in §3. |
+| 2 | Auth is an **`x-api-key` header**, not `Authorization: Bearer`. | Corrected throughout; the platform sends `x-api-key: <tenant-key>`. |
+| 3 | The production corpus is **course-scoped by `moodle_course_id`** — there is no tenant-wide collection to query. | The retrieval endpoint is course-scoped (§3). Course scope comes from the Launch Token (Teacher generation) or the chat's course context (Diagram Requests). Tenant-wide retrieval is not the primary mode; **WI-RAG-2 (tag filtering) is deferred to roadmap**, and Curriculum Reference derivation uses its topic-derived fallback (handoff item 12 fallback is now the primary mechanism). |
+| 4 | Document titles are embedded per chunk at ingestion; stable ids are achievable. Positional locators are not present for existing corpora. | **WI-RAG-1 amended:** `chunk_id`/`document_id`/`document_title` are required response fields (achievable); `locator` is **nullable** — captured for newly ingested documents only; **no re-ingestion of existing corpora**. Citations degrade to excerpt + document title per the approved fallback (already the schema's required set — AD-2). |
+| 5 | Production declares **no response models** (all 200s are empty schemas). | **WI-RAG-3:** the new retrieval endpoint must declare typed response models in its OpenAPI spec. |
+| 6 | `max_documents_per_course` defaults to **5**. | Operational note, not contractual: per-tenant raises may be needed for grounding quality; monitor via generation-quality telemetry (SM-2). |
 
-Both consumers call server-side from the platform backend. **No Student or Teacher identity is ever forwarded to edon-rag** — requests carry only the tenant credential, the query text, and retrieval parameters (NFR-9 identity-stripping happens before this boundary).
+## 2. Consumers, auth, and scoping
 
-## 2. Authentication and tenant scoping
+| Platform consumer | Purpose | Scope source |
+| --- | --- | --- |
+| Generation pipeline | Grounding Chunks for lesson generation (FR-4, FR-6) | `course_ref` from the Launch Token, mapped to `moodle_course_id` |
+| Diagram service | Grounding for Student Diagram Requests (FR-19, FR-28) | course context supplied by block_edon_ai (required — see that contract) |
 
-- Per-tenant API key in a request header (`Authorization: Bearer <tenant-api-key>` or edon-rag's existing header convention — adopt whichever edon-rag already uses; the platform stores one edon-rag credential per Tenant in tenant config, encrypted at rest).
-- The API key **is** the tenant scope: retrieval must return chunks exclusively from that tenant's Corpus. The platform never passes a tenant identifier in the body; cross-tenant retrieval must be impossible by construction on the edon-rag side (this matches edon-rag's existing multi-tenant model).
-- Timeouts: platform calls with a 15 s deadline and treats timeout as a retrieval failure (Generation Job fails as ungrounded per A-5 if no usable chunks are obtained after retry; Diagram Request fails with the user-facing "couldn't produce that diagram" outcome).
+- **Auth:** `x-api-key: <tenant-api-key>` per request (edon-rag's existing convention). The key is the tenant boundary; the course id selects a corpus **within** that tenant — edon-rag must reject a course id not belonging to the key's tenant (404/403, never cross-tenant data).
+- **No user identity crosses this boundary** (NFR-9): requests carry only the key, the course id, the query text, and retrieval parameters.
+- Timeouts: 15 s deadline; timeout = retrieval failure (Generation Job fails `ungrounded` per A-5 after one retry; Diagram Request returns the user-facing failure outcome).
 
-## 3. Required endpoint
+## 3. Required endpoint — WI-RAG-0 (to be built)
 
-### `POST /api/v1/retrieve`
+### `POST /api/courses/{moodle_course_id}/retrieve`
 
 Request (`application/json`):
 
@@ -29,22 +36,17 @@ Request (`application/json`):
 {
   "query": "Ohm's law and simple circuits — lesson plan grounding",
   "top_k": 8,
-  "min_score": 0.0,
-  "filters": {
-    "document_ids": ["optional — restrict to specific corpus documents"],
-    "tags": ["optional — curriculum/subject tags, see WI-RAG-2"]
-  }
+  "min_score": 0.0
 }
 ```
 
 | Field | Type | Required | Notes |
 | --- | --- | --- | --- |
-| `query` | string | yes | Natural-language retrieval query. ≤ 2,000 chars. |
-| `top_k` | int | no (default 8) | Platform uses 6–16 depending on pipeline stage; contract max 32. |
-| `min_score` | float | no | Similarity floor; platform default 0 (filtering done platform-side). |
-| `filters` | object | no | Optional narrowing. Absence = whole tenant Corpus. See WI-RAG-2. |
+| `query` | string | yes | ≤ 2,000 chars. Retrieval only — the endpoint must perform **no answer generation** (no chat-pipeline LLM spend). |
+| `top_k` | int | no (default 8) | Platform uses 6–16 by pipeline stage; contract max 32. |
+| `min_score` | float | no | Platform default 0 (filters platform-side). |
 
-Response `200` (`application/json`):
+Response `200` (typed model required — WI-RAG-3):
 
 ```json
 {
@@ -53,47 +55,38 @@ Response `200` (`application/json`):
       "chunk_id": "stable-opaque-id",
       "document_id": "stable-opaque-id",
       "document_title": "NCE Physics Curriculum — Year 2",
-      "locator": "Section 4.3, p. 87",
+      "locator": null,
       "text": "…chunk text…",
-      "score": 0.83,
-      "metadata": {
-        "tags": ["physics", "electricity"],
-        "source_type": "curriculum|handbook|notes",
-        "indexed_at": "2026-05-02T10:00:00Z"
-      }
+      "score": 0.83
     }
   ]
 }
 ```
 
-| Field | Required | Why the platform needs it |
+| Field | Required | Notes |
 | --- | --- | --- |
-| `chunk_id` | yes, **stable** | Citations (FR-6) persist inside immutable Published Versions forever (I-3). The id must remain resolvable (or at least stable as an identifier) across edon-rag re-indexing. See WI-RAG-1. |
-| `document_id`, `document_title` | yes | Citation display in the Review Workspace and Player Sources section (OQ-10). |
-| `locator` | strongly desired | Human-readable position (section/page). Displayed on Citation cards. See WI-RAG-1. |
-| `text` | yes | Prompt grounding + Citation excerpt (platform stores the excerpt with the Citation, so Published Versions never depend on edon-rag availability — NFR-4). |
+| `chunk_id`, `document_id` | yes, stable | Citations persist inside immutable Published Versions (I-3); ids must stay stable across re-indexing. |
+| `document_title` | yes | Embedded per chunk at ingestion — confirmed achievable. |
+| `locator` | **nullable** | Newly ingested documents only; existing corpora return `null` (no re-ingestion). The Lesson Script citation object already treats it as optional (AD-2). |
+| `text` | yes | Prompt grounding + stored Citation excerpt — Published Versions never depend on edon-rag availability (NFR-4). |
 | `score` | yes | Ranking, ungrounded-detection threshold (A-5), telemetry. |
-| `metadata.tags` | desired | Curriculum Reference derivation (UX handoff item 12) and future course-scoped filtering. See WI-RAG-2. |
 
-Errors: `401/403` (bad/revoked key), `422` (malformed request), `429` (edon-rag-side rate limiting, if any — platform backs off), `5xx` (platform retries once, then fails the consuming operation visibly). Error bodies are logged tenant-scoped; never surfaced raw to users.
-
-### Optional: `GET /api/v1/health`
-Unauthenticated or key-authenticated liveness probe used by platform ops monitoring. If absent, the platform treats retrieval errors as the only signal (acceptable; listed for completeness, not required).
+Errors: `401/403` (bad/revoked key), `403/404` (course not in the key's tenant), `422` (malformed), `429` (backoff), `5xx` (one retry, then visible failure). Never surfaced raw to users.
 
 ## 4. Non-requirements (explicitly out of contract)
 
-- **Embeddings**: the `embeddings` workload stays inside edon-rag (`nomic-embed-text` via Ollama) exactly as today; the platform never requests raw embeddings.
-- **Indexing/ingestion**: corpus management remains edon-rag's and the institutions' concern; the platform only reads.
-- **Chat/completion**: the platform brings its own LLM adapter; edon-rag is retrieval-only in this contract.
-- **Student identity**: never sent (NFR-9).
+- **Embeddings:** stay inside edon-rag (`nomic-embed-text` via Ollama); the platform never requests raw embeddings; the platform's `embeddings` workload key exists in config for completeness only.
+- **Indexing/ingestion:** remains edon-rag's and the institutions' concern. **No re-ingestion of existing corpora is required by this contract.**
+- **Chat/answer generation:** the platform brings its own LLM adapter; the retrieval endpoint must not generate.
+- **User identity:** never sent (NFR-9).
 
-## 5. Integration Work Items (gaps — to verify against production edon-rag, never assumed)
+## 5. Integration Work Items (edon-rag-side, ticketed)
 
-| ID | Requirement | If absent, MVP fallback | Priority |
+| ID | Work | Priority | Blocks |
 | --- | --- | --- | --- |
-| **WI-RAG-1** | Stable `chunk_id`/`document_id`, `document_title`, and a human-readable `locator` in retrieval responses (citation-grade metadata). | Platform stores the full excerpt + whatever metadata exists at generation time; Citations degrade to excerpt + document title without deep locators. Published lessons remain self-contained either way. | **High — verify first.** The brief promises "ranked chunks with metadata/citations"; the exact fields must be confirmed against the deployed API. |
-| **WI-RAG-2** | Metadata/tag filtering (`filters.tags`) usable for curriculum/subject scoping. | Tenant-wide retrieval only (still satisfies FR-4, which requires Tenant scoping, not course scoping); Curriculum Reference derivation falls back to topic-derived labels (handoff item 12 fallback). | Medium |
-| **WI-RAG-3** | `top_k` and `min_score` request parameters honored. | Platform truncates/filters client-side from whatever fixed count edon-rag returns. | Low |
-| **WI-RAG-4** | Documented error semantics + a 429 backoff signal. | Platform treats all non-200 as retriable-once failures. | Low |
+| **WI-RAG-0** | Build `POST /api/courses/{moodle_course_id}/retrieve` (raw retrieval, no generation), `x-api-key`-authed, course-in-tenant enforced, per §3. | **Critical** | **Generation epics** (M1's live-retrieval slice; recorded fixtures unblock pipeline development meanwhile). |
+| **WI-RAG-1** (amended) | Stable `chunk_id`/`document_id` + per-chunk `document_title` in the retrieval response; `locator` nullable, populated for new ingestions only. | High (part of WI-RAG-0's definition of done) | Same as WI-RAG-0. |
+| **WI-RAG-3** | Declared response models on the new endpoint (production currently declares none). | Medium (part of WI-RAG-0's DoD) | Contract testability. |
+| **WI-RAG-2** | Metadata/tag filtering for curriculum scoping. | **Deferred to roadmap** | Nothing — course scoping covers MVP; Curriculum Reference uses the topic-derived fallback. |
 
-**First action when integration work starts:** capture the deployed edon-rag OpenAPI spec (it is FastAPI — `/openapi.json` exists) and reconcile this contract against it; convert every mismatch into a ticketed work item under the IDs above.
+Operational (not contractual): review `max_documents_per_course` (default 5) per tenant if grounding quality telemetry indicates starvation.

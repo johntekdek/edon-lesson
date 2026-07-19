@@ -1,6 +1,6 @@
 # External Interface: block_edon_ai ↔ Platform Diagram API (v1)
 
-**Status:** draft — pending stakeholder sign-off of the architecture run 2026-07-17
+**Status:** final (stakeholder sign-off, 2026-07-18)
 **System:** `block_edon_ai` — the existing production Moodle AI-chat plugin, a modifiable companion (stakeholder decision, OQ-12). Its enhancement is a registered third-repository work item with a **minimal surface**: call the endpoint below and render what comes back. Sanitisation, caching, Quotas, Rate Limits, grounding, and identity-stripping all stay platform-side.
 
 ## 1. Authentication
@@ -16,7 +16,7 @@ Request:
 {
   "request_text": "labelled diagram of the human heart",
   "lms_user_id": "moodle user id",
-  "course_ref": "optional"
+  "course_ref": "required — retrieval is course-scoped (edon-rag contract v1.1)"
 }
 ```
 
@@ -49,7 +49,12 @@ Response `200` — one of `status` values, always with humane copy fields the pl
 ## 3. Feature flag
 If the Diagram feature is flagged off for the Tenant, `POST /api/v1/diagrams` returns `403 {status: "disabled"}`; the plugin hides the diagram affordance entirely (it may probe via tenant config endpoint `GET /api/v1/features` at page load, cached plugin-side for 5 min).
 
-## 4. Work items (plugin-side, registered)
+## 4. Live Q&A — course-scoped chat embed (stakeholder amendment, 2026-07-18)
+
+The lesson activity page presents the **existing block_edon_ai chat**, scoped to the launch course, alongside the embedded Player — the MVP's Live Q&A surface. This rides the chat's existing edon-rag pipeline: **no new inference economics** (I-1 untouched), NFR-9 identity-stripping unchanged. The Player itself does not implement chat; the plugin/page composition places the chat surface with the activity (presentation details are a UX/plugin story concern within the Moodle Embedding Contract — the chat must not break the Player's style isolation).
+
+## 5. Work items (plugin-side, registered)
 - **WI-CHAT-1**: diagram request affordance + diagram card rendering (SVG, label, alt text, "View larger" link, Report control) per the UX Diagram chat message spec.
 - **WI-CHAT-2**: status-message pass-through (chat replies for limit/quota/budget/failure states) + live-region announcement via the chat's existing mechanism.
 - **WI-CHAT-3**: feature-flag probe + hide behavior.
+- **WI-CHAT-4** (2026-07-18): course-scoped chat presence on the mod_edonlesson activity page (Live Q&A beside the Player), per §4. Lands in milestone M4 with diagrams.

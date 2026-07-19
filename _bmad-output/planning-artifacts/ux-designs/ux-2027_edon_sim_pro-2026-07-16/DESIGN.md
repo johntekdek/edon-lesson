@@ -7,7 +7,7 @@ sources:
   - _bmad-output/planning-artifacts/prds/prd-2027_edon_sim_pro-2026-07-07/addendum.md
   - _bmad-output/planning-artifacts/edon-lesson-studio-product-brief.md
   - _bmad-output/project-context.md
-updated: 2026-07-17
+updated: 2026-07-18
 colors:
   primary: '#006847'
   primary-deep: '#004D34'
@@ -63,7 +63,7 @@ typography:
     fontWeight: '400'
     lineHeight: '1.4'
   player-ui:
-    note: 'The CORE Player bundle ships NO webfonts (strict bundle budget, PRD FR-18/NFR-2); Player text renders in the system stack: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif — sizes/weights mirror the Inter ramp above. On the Showcase tier only, a lazy enhancement chunk loads Inter + Plus Jakarta Sans after first content paint — never render-blocking, never counted against the core budget (amended by stakeholder, 2026-07-17). The system stack remains the floor and the fallback. Inter and Plus Jakarta Sans always load in the Authoring UI.'
+    note: 'The CORE Player bundle ships NO webfonts (strict bundle budget); Player text renders in the system stack for first paint: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif — sizes/weights mirror the Inter ramp above. A lazy chunk loads Inter + Plus Jakarta Sans after first content paint as STANDARD on all capable devices (re-amended by stakeholder, 2026-07-18 — webfonts are no longer Showcase-only) — never render-blocking, never counted against the core budget. The system stack remains the fallback at every moment. Inter and Plus Jakarta Sans always load in the Authoring UI.'
 rounded:
   sm: 4px
   md: 8px
@@ -148,7 +148,7 @@ e-DON Lesson Studio serves lecturers and pre-service teachers at ~60 Nigerian Co
 
 That split is the system's one big idea: **green means settled, gold means judge this**. Everything the institution or the Teacher has approved renders in the green/neutral family. Everything the AI produced that still awaits human judgment — unreviewed Blocks, regeneration affordances, the "AI-generated" label on chat diagrams — renders in the gold family. A Teacher scanning a review screen can see at a glance what still needs their eyes; a Student can see at a glance which content carries an AI caveat. The Review Gate is the heart of the product (PRD I-2, FR-9–FR-12), and the color system exists to make that gate legible.
 
-The third brand value is **adaptive performance as an aesthetic** (amended by stakeholder, 2026-07-17). e-DON reads as a flagship tech-startup experience, and it earns that in both directions. On capable devices with fast connections — the **Showcase tier** — the product is polished and delightful: purposeful motion, a hero entrance for 3D content, brand typography, celebratory micro-interactions, generation rendered as a visible showpiece. On the device floor (Android 8-era hardware on metered data — PRD FR-18, OQ-16) the same product is ruthlessly restrained: flat surfaces, system fonts, static states, poster images styled as first-class content. Both are the brand — delight where the device can afford it, respect where it cannot — and a page that loads fast on a 1.5 GB-RAM phone remains non-negotiable. Motion is a Showcase voice, never a governance voice: it must never compete with, imitate, or animate the gold review-gate signals.
+The third brand value is **adaptive performance as an aesthetic** (amended by stakeholder, 2026-07-17; posture inverted 2026-07-18 — Amendment F). e-DON reads as a flagship tech-startup experience, and **the polished, delightful expression is now the canonical default**: purposeful motion, a hero entrance for 3D content, brand typography, celebratory micro-interactions, generation rendered as a visible showpiece — modern smartphones with reliable connectivity are the assumed audience. Under data-saver signals or on genuinely constrained hardware the same product degrades gracefully to its restrained expression: flat surfaces, system fonts, static states, poster images styled as first-class content — a retained best-effort fallback rather than a launch-gating target. Both remain the brand. Motion is a polish voice, never a governance voice: it must never compete with, imitate, or animate the gold review-gate signals, and every animation respects `prefers-reduced-motion`.
 
 ## Colors
 
@@ -171,7 +171,7 @@ Two families, two jobs (both SIL OFL; licence metadata recorded when the depende
 - **Plus Jakarta Sans** (`{typography.display}`, `{typography.display-sm}`, `{typography.title}`) is the wayfinding voice of the **Authoring UI**: page titles, lesson titles, block headers, dialog titles. Its geometric warmth reads modern without reading playful.
 - **Inter** (`{typography.body}`, `{typography.body-sm}`, `{typography.label}`, `{typography.caption}`) is the working voice: body copy, form fields, table rows, citations, chips.
 
-The **Player's core rule stands**: per `{typography.player-ui}`, the core Player bundle ships no webfonts — text renders in the system stack at the same size/weight ramp (strict bundle budget, PRD FR-18, plus Moodle-native feel). On the **Showcase tier only** (amended by stakeholder, 2026-07-17), a lazy enhancement chunk loads Inter + Plus Jakarta Sans after first content paint; it is never render-blocking, never counted against the core budget, and the system stack remains the fallback at every moment. Lesson *content* is text, SVG, and assets; it never bakes text into images (NFR-8 localisation-readiness).
+The **Player's core rule stands**: per `{typography.player-ui}`, the core Player bundle ships no webfonts — text renders in the system stack for first paint at the same size/weight ramp (core bundle budget, plus Moodle-native feel). A lazy chunk loads Inter + Plus Jakarta Sans after first content paint as **standard on all capable devices** (re-amended by stakeholder, 2026-07-18); it is never render-blocking, never counted against the core budget, and the system stack remains the fallback at every moment. Lesson *content* is text, SVG, and assets; it never bakes text into images (NFR-8 localisation-readiness).
 
 Type discipline: `display` appears at most once per screen. No all-caps except `{typography.label}` chips where case is set by content, not CSS. Minimum rendered body size anywhere: 14px — and *meaning-bearing text is body, not caption*: the AI content label, poster explanations, and quiz feedback render at ≥14px (`{typography.body-sm}`); `{typography.caption}` (12px) is reserved for genuine metadata (dates, chunk refs, version counts).
 

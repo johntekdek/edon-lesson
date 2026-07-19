@@ -1,6 +1,6 @@
 # ADR-003: Job Queue — Procrastinate (PostgreSQL-backed)
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 

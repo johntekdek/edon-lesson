@@ -1,6 +1,6 @@
 # ADR-010: Attempts, Scoring, and LMS Delivery
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 UX handoff items 11 (attempt unit incl. cross-version "highest attempt") and 17 (quiz submission durability); FR-15 (server-authoritative scoring), FR-23/OQ-15 (completion, retakes, highest attempt, version pinning), A-13 (retriable writeback), SM-3 (24 h window), A-4 (in-flight sessions keep their version).

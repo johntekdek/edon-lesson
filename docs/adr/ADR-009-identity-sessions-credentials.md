@@ -1,6 +1,6 @@
 # ADR-009: Identity, Sessions, and Credentials
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 FR-24, FR-29 (Launch Token — UX handoff item 16), NFR-3 (rotation from day one), playback authentication, block_edon_ai pattern consistency.

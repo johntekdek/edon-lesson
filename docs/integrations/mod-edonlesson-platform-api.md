@@ -1,6 +1,6 @@
 # External Interface: mod_edonlesson ↔ Platform API (v1)
 
-**Status:** draft — pending stakeholder sign-off of the architecture run 2026-07-17
+**Status:** final (stakeholder sign-off, 2026-07-18)
 **System:** `mod_edonlesson` — thin companion Moodle activity module (separate repo, GPLv3). All proprietary logic stays platform-side; the module is a client of the endpoints below plus Moodle's own grade/completion/task APIs.
 **Posture:** this is the **LMS-agnostic platform API** (V3 seam f). Nothing in it is Moodle-specific; Moodle specifics (gradelib, completion API, scheduled tasks, activity settings) live only in the plugin. LTI 1.3 later means a new consumer of these same endpoints, not new platform core.
 
@@ -61,6 +61,7 @@ Rationale: outbound-only HTTP from Moodle (no inbound firewall holes into instit
 `401/403` invalid or revoked key → plugin surfaces its standard "service unavailable" string and logs; `404` unknown lesson (unpublished/deleted) → the activity shows the FR-12 "not available" state; `429` → task backs off to next run; `5xx` → retriable. The plugin never renders raw platform errors to users.
 
 ## 4. Work items (plugin-side, registered — not platform gaps)
+- **WI-MOD-0 (surface rule, stakeholder 2026-07-18):** every Moodle-rendered surface of the plugin (course entry, settings/picker, teacher entry point, mobile-app hand-off) uses **standard Moodle renderers/output APIs** so it inherits each site's theme — including the premium production theme — with zero per-school customization. The embedded Player remains style-isolated per the Moodle Embedding Contract (theme CSS must not affect it; it must not leak styles into the page); **Player isolation is verified against the production theme as part of the M3 milestone gate.**
 - **WI-MOD-1**: plugin scaffolding — activity module with picker (2.1), settings (API key, signing secret, platform URL), capability checks mapping Moodle roles → `teacher`/`tenant_admin`/`student`.
 - **WI-MOD-2**: scheduled task draining the outbox (2.4) + gradebook/completion writes + ack.
 - **WI-MOD-3**: launch-token minting for the teacher entry point (2.2), new-tab launch, Moodle-mobile-app browser hand-off screen (UX ruling 14).

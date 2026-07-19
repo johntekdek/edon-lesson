@@ -1,12 +1,12 @@
 # ADR-013: Quota, Budget, and Rate-Limit Subsystem
 
-**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+**Status:** Accepted (stakeholder sign-off, 2026-07-18)
 
 ## Context
 FR-21/FR-26 (quotas, budgets, rate limits, tunable defaults, OQ-9 exhaustion semantics, A-29 in-flight overrun), project-context §4 (enforcement at the adapter layer, not UI). V3 seam (d): generic over generation types — student-triggered generation later must be a policy row, not a new subsystem.
 
 ## Decision
-One **governance subsystem**, three policy kinds over one vocabulary — every governed operation is an `action_type` (`lesson_generation`, `block_regeneration`, `diagram_request`, … future types are rows, not code):
+One **governance subsystem**, three policy kinds over one vocabulary — every governed operation is an `action_type` (`lesson_generation`, `block_regeneration`, `diagram_request`, `tts_generation` (publish-time, teacher-attributed — added 2026-07-18), … future types are rows, not code):
 
 - **Quota** (countable cap): `(tenant, action_type, scope: tenant|user, period, limit)` — e.g. diagram 20/Student/day (OQ-2 default).
 - **Rate limit** (temporal throttle): `(action_type, scope: user, window, max)` — platform defaults overridable per tenant (OQ-2); guards *LLM spend*, so cache hits never charge (FR-21).
