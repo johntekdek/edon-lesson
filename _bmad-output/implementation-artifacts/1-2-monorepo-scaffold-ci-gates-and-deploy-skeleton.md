@@ -1,6 +1,9 @@
 ---
-baseline_commit: fff746e80146f36d9bc2f487163d03ede3a72b7d
+baseline_commit: c689e7f196ec1f516053febfc3383f0fc512e435
 ---
+<!-- baseline_commit updated 2026-07-19: the first-push recovery rebase rewrote all
+     history SHAs; c689e7f is the rewritten equivalent of the original baseline fff746e
+     (the threat-model commit, immediately pre-story). -->
 
 # Story 1.2: Monorepo Scaffold, CI Gates, and Deploy Skeleton
 
@@ -233,6 +236,7 @@ claude-fable-5 (Claude Fable 5)
 
 ### Change Log
 
+- 2026-07-19 (post-push recovery): john's first push was rejected (GitHub repo initialized with a README "first commit"); the recovery rebase rewrote every history SHA and landed the story commit (now `298813e`, content verified identical to the local original) plus the README tip directly on `main` — pushed. Consequences handled: the security workflow's gitleaks job was red on GitHub (fingerprints embed commit SHAs) — fixed with a `.gitleaks.toml` path allowlist for the BMAD hash-manifest (checksums by design; fingerprints would re-trip on every manifest update) plus epics.md prose fingerprints for BOTH SHA generations (the pre-rewrite history stays reachable via local branches, and gitleaks attributes duplicated findings nondeterministically between generations — verified deterministic-clean over three runs); story `baseline_commit` updated to the rewritten equivalent `c689e7f`. Flow note: the story's CI proof now rides the `main` push events instead of a PR (the story branch was deleted in the recovery; work is already on `main`) — branch protection (runbook §7) applies from the next story onward, which restores the PR flow. Local branch `feat/1-1-lesson-script-schema` still points into pre-rewrite history — safe for john to delete.
 - 2026-07-19: Implemented Story 1.2 — monorepo scaffold (backend FastAPI skeleton + health, player/authoring workspaces, root uv workspace + uv.lock, npm workspaces), full CI gate set (ci.yml + security.yml: ruff/pytest/import-linter/i18n, ESLint/Prettier/Vitest/no-TS, licence-audit, budgets stub, Playwright e2e, npm audit/pip-audit/gitleaks, permissions: contents: read everywhere, Dependabot npm+uv+actions), budgets.json + schema, deploy skeleton (systemd unit set, nginx+TLS config, deploy.sh, runbook draft, .env.example), ADR-015/ADR-016, threat-model S9. schema.yml superseded by ci.yml with identical schema-suite coverage.
 
 ### File List

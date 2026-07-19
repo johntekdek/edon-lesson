@@ -1,0 +1,7 @@
+# gitleaks config (Story 1.2). Extends the default ruleset — never replaces it.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "BMAD tooling file manifest: every row carries a SHA-256 content hash (integrity checksum, not a credential); per-fingerprint ignores would re-trip on every manifest update. Scoped to this one generated file only."
+paths = ['''_bmad/_config/files-manifest\.csv''']
