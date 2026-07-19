@@ -260,6 +260,8 @@ The Player renders a Published Version's full ordered Block sequence: Slide, Nar
 
 Narration in MVP uses the browser SpeechSynthesis API (no server-side TTS). The Player treats narration audio as a swappable provider so pre-generated or streaming neural TTS can plug in later without rework. *(Source: brief §5.11.)*
 
+*Superseded in part by `addendum.md` §5 (stakeholder amendment, 2026-07-18): publish-time neural TTS is approved MVP scope behind the same provider seam; pre-generated audio becomes the primary source and browser SpeechSynthesis the fallback. Text remains the always-available primary modality.*
+
 **Consequences (testable):**
 - Narration plays via the browser's speech synthesis with no server-side audio generation or storage in MVP.
 - On a device/browser without usable speech synthesis, narration degrades gracefully (lesson remains completable; narration text remains accessible). `[ASSUMPTION: narration content is available as on-screen text when audio is unavailable.]`
@@ -296,6 +298,8 @@ Simulation Blocks run in sandboxed iframes — no network access, no storage API
 #### FR-18: Low-spec device performance
 
 The Player performs acceptably on low-spec Android devices. Heavy assets are compressed and size-budgeted per Block, with a poster-image fallback so lessons degrade gracefully rather than fail. Realizes UJ-2 (edge case). *(Source: brief §5.15.)*
+
+*Device posture superseded in part by `addendum.md` §5 (stakeholder realignment, 2026-07-18): Showcase/Full is the canonical default experience on modern devices; the Floor tier is thin best-effort fallback and the low-spec CI profile is advisory. Poster fallbacks and completability rules stand.*
 
 **Consequences (testable):**
 - The reference device floor is a mixed fleet including very old devices: ~1.5–2 GB RAM, Android 8-era hardware, and potentially outdated WebViews. (Stakeholder decision, OQ-16.)
@@ -453,7 +457,7 @@ This is a greenfield build in a new repository. The systems below are external d
 
 The MVP is not, and does not include *(source: brief §7 — the PM must not promote these into MVP)*:
 
-- **No server-side or neural TTS** — narration is browser speech synthesis behind a provider seam (FR-14).
+- **No server-side or neural TTS** — narration is browser speech synthesis behind a provider seam (FR-14). *(Superseded by `addendum.md` §5, 2026-07-18: publish-time neural TTS approved — per-lesson cost at publish, zero per-student cost; I-1 intact.)*
 - **No multi-agent classroom features of any kind** — no AI teacher persona, AI classmates, live Q&A, or adaptive sequencing.
 - **No Student-triggered Simulation generation** — Simulations are created only during Teacher-initiated generation.
 - **No cross-Tenant lesson sharing or library.**

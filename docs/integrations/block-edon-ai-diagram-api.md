@@ -16,7 +16,7 @@ Request:
 {
   "request_text": "labelled diagram of the human heart",
   "lms_user_id": "moodle user id",
-  "course_ref": "required — retrieval is course-scoped (edon-rag contract v1.1)"
+  "course_ref": "required — retrieval is course-scoped (edon-rag contract v1.2)"
 }
 ```
 
