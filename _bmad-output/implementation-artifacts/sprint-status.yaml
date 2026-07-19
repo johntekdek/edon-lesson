@@ -1,0 +1,173 @@
+# generated: 2026-07-18
+# last_updated: 2026-07-18
+# project: 2027_edon_sim_pro
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# Action Item Status:
+#   - open: Committed during a retrospective, not yet addressed
+#   - in-progress: Actively being worked on
+#   - done: Completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Retrospective appends its action items to action_items; sprint-status surfaces open ones
+#
+# SOLO-DEV / MILESTONE NOTES (2026-07-18 sprint planning session):
+# ===============
+# - Solo developer, story-by-story, fresh session per story. Epics map to milestone
+#   gates M1-M6: M1=Epics1-2, M2=Epics3-4, M3=Epics5-6, M4=Epics7-8, M5=Epics9-10, M6=Epic11.
+# - Epic 9 (Model3D) is BLOCKED on OQ-6 (>=20 stakeholder-curated models) EXCEPT
+#   Story 9.1 (ingest tooling, which the curation itself needs). Stories 9.2-9.4 stay
+#   in backlog with a blocked annotation until the stakeholder delivers the seed set;
+#   'blocked' is not a legal status value in this state machine, so the constraint is
+#   recorded as an inline comment rather than a status.
+# - Story 2.7 (live edon-rag retrieval switch) is UNBLOCKED: WI-RAG-0 delivered
+#   2026-07-18 (edon-rag v2.1.0). No blockers recorded elsewhere in the backlog.
+
+generated: 2026-07-18
+last_updated: 2026-07-18
+project: 2027_edon_sim_pro
+project_key: NOKEY
+tracking_system: file-system
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
+
+development_status:
+  # ===== Epic 1: Lesson Script Schema & Platform Foundation (M1) =====
+  epic-1: backlog
+  1-1-lesson-script-schema-v1-0-package: backlog
+  1-2-monorepo-scaffold-ci-gates-and-deploy-skeleton: backlog
+  1-3-tenant-substrate-tenantcontext-rls-migrations-baseline: backlog
+  1-4-identity-credentials-five-kinds-plus-dev-token-cli: backlog
+  1-5-llm-adapter-two-drivers-per-workload-config: backlog
+  1-6-governance-subsystem-reserve-settle: backlog
+  1-7-structured-events-cost-telemetry-store-and-retention: backlog
+  1-8-operator-tenant-provisioning-policy-configuration: backlog
+  epic-1-retrospective: optional
+
+  # ===== Epic 2: Grounded Generation on Recorded Fixtures (M1) =====
+  epic-2: backlog
+  2-1-edon-rag-retrieval-client-on-recorded-fixtures: backlog
+  2-2-pipeline-engine-as-configuration: backlog
+  2-3-walking-skeleton-plan-slide-narration-quiz-stages-with-citations: backlog
+  2-4-draft-persistence-idempotency: backlog
+  2-5-async-jobs-with-per-block-progress-over-sse: backlog
+  2-6-authoring-spa-foundation-generate-form-progress-card: backlog
+  2-7-live-retrieval-switch-thin: backlog  # unblocked 2026-07-18: WI-RAG-0 delivered (edon-rag v2.1.0)
+  epic-2-retrospective: optional
+
+  # ===== Epic 3: Review Gate & Publish, incl. publish-time TTS (M2) =====
+  epic-3: backlog
+  3-1-course-home-college-library: backlog
+  3-2-review-workspace-rail-editor-citations-layout: backlog
+  3-3-block-level-text-editing-with-revalidation: backlog
+  3-4-autosave-revision-concurrency-and-durability: backlog
+  3-5-reorder-delete-discard-whole-lesson-regeneration-and-the-block-regeneration-framework: backlog
+  3-6-faithful-preview-overlay: backlog
+  3-7-publish-immutable-versions-asset-freeze-publish-dialog: backlog
+  3-8-publish-time-tts-narration: backlog
+  epic-3-retrospective: optional
+
+  # ===== Epic 4: Player Core (M2) =====
+  epic-4: backlog
+  4-1-embeddable-iife-shell-registries-and-the-embedding-contract: backlog
+  4-2-playback-bootstrap-sessions: backlog
+  4-3-slide-rendering-navigation-and-progress-header: backlog
+  4-4-narration-providers-transcript-floor: backlog
+  4-5-quiz-blocks-instant-client-feedback: backlog
+  4-6-attempts-server-authoritative-scoring-idempotent-submissions: backlog
+  4-7-resume-completion-summary-and-sources: backlog
+  4-8-capability-tiers-degradation-framework: backlog
+  4-9-defined-failure-edge-states: backlog
+  epic-4-retrospective: optional
+
+  # ===== Epic 5: Platform LMS Edge (M3) =====
+  epic-5: backlog
+  5-1-launch-token-verification-authoring-sessions: backlog
+  5-2-tenant-server-to-server-auth-key-rotation-and-cors: backlog
+  5-3-lesson-picker-playback-session-apis: backlog
+  5-4-delivery-outbox-pull-and-ack: backlog
+  5-5-integration-contracts-frozen: backlog
+  epic-5-retrospective: optional
+
+  # ===== Epic 6: mod_edonlesson Companion Plugin (M3, companion repo, GPLv3) =====
+  epic-6: backlog
+  6-1-plugin-scaffold-tenant-configuration: backlog
+  6-2-activity-creation-via-the-lesson-picker: backlog
+  6-3-embedded-playback-with-production-theme-style-isolation: backlog  # M3 gate item
+  6-4-completion-gradebook-writeback-scheduled-task: backlog
+  6-5-teacher-entry-point-launch-token-minting: backlog
+  epic-6-retrospective: optional
+
+  # ===== Epic 7: Diagram Blocks & the Governed Student Diagram Channel (M4) =====
+  epic-7: backlog
+  7-1-the-sanitisation-gate: backlog
+  7-2-diagram-blocks-in-lessons: backlog
+  7-3-student-diagram-endpoint-cache-governance-generate-sanitise: backlog
+  7-4-diagram-limits-humane-messaging: backlog
+  7-5-report-control-review-queue-backend: backlog
+  7-6-diagram-review-queue-ui-invalidation: backlog
+  epic-7-retrospective: optional
+
+  # ===== Epic 8: block_edon_ai Companion Enhancement (M4, companion repo) =====
+  epic-8: backlog
+  8-1-diagram-chat-message-component: backlog
+  8-2-ai-label-report-control: backlog
+  8-3-wi-chat-4-course-scoped-chat-on-the-lesson-activity-page: backlog
+  8-4-limit-states-feature-flag-off-in-chat: backlog
+  epic-8-retrospective: optional
+
+  # ===== Epic 9: Model3D Blocks & the Curated Library (M5 - BLOCKED on OQ-6) =====
+  epic-9: backlog
+  9-1-model-ingest-pipeline-library-registry: backlog  # NOT blocked - ingest tooling the curation itself needs
+  9-2-seed-library-intake: backlog  # BLOCKED on OQ-6 (stakeholder-curated >=20 models) - do not start
+  9-3-pipeline-model3d-selection-stage: backlog  # BLOCKED on OQ-6 - depends on seeded library (9.2)
+  9-4-model3d-viewer-renderer: backlog  # BLOCKED on OQ-6 - depends on seeded library (9.2)
+  epic-9-retrospective: optional
+
+  # ===== Epic 10: Simulation Blocks, Template-First (M5) =====
+  epic-10: backlog
+  10-1-sandbox-runtime-postmessage-protocol-v1: backlog
+  10-2-pre-publish-check-harness: backlog
+  10-3-simulation-template-seed-set: backlog
+  10-4-pipeline-simulation-stage-template-mode: backlog
+  10-5-player-simulation-frame: backlog
+  10-6-freecode-dual-mode-support: backlog
+  epic-10-retrospective: optional
+
+  # ===== Epic 11: Showcase Polish & Launch Hardening (M6) =====
+  epic-11: backlog
+  11-1-showcase-enhancement-chunks-fonts-motion: backlog
+  11-2-performance-gates-in-ci: backlog
+  11-3-i18n-copy-completeness-audit: backlog
+  11-4-accessibility-aa-audit: backlog
+  11-5-ops-monitoring-runbooks-weekly-checklist: backlog
+  11-6-pilot-readiness-verification: backlog
+  epic-11-retrospective: optional
