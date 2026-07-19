@@ -18,3 +18,9 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+edon_lesson_schema = [
+    "schemas/lesson/1.0/*.json",
+    "schemas/lesson/1.0/blocks/*.json",
+]

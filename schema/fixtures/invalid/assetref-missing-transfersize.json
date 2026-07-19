@@ -1,0 +1,25 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b04",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 1,
+  "title": "Asset Reference Missing transferSize",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "narration",
+      "title": "Introduction",
+      "citations": [],
+      "text": "The periodic table orders the elements by atomic number.",
+      "audioRef": {
+        "ref": "asset://audio/lesson-intro.mp3"
+      }
+    }
+  ]
+}

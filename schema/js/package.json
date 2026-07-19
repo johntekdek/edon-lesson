@@ -2,6 +2,8 @@
   "name": "@edon/lesson-schema",
   "version": "1.0.0",
   "description": "Lesson Script Schema v1.0 — ajv validator wrapper (toolchain/CI only; no runtime validation in the Player)",
+  "private": true,
+  "license": "UNLICENSED",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

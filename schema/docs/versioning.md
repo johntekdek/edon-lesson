@@ -1,8 +1,11 @@
 # Versioning & Compatibility Policy
 
 The `schema` field is a `"MAJOR.MINOR"` string (e.g. `"1.0"`). It is validated by **pattern
-only** (`^\d+\.\d+$`) — never by `const`/`enum` — so scripts stamped with future versions
-still reach the semantics below instead of failing on the version literal.
+only** (`^[0-9]+\.[0-9]+(?!\n)$`) — never by `const`/`enum` — so scripts stamped with future
+versions still reach the semantics below instead of failing on the version literal. The
+pattern uses ASCII `[0-9]` (never `\d`) and a `(?!\n)$` end guard so the ECMA (ajv) and
+Python (`re`) regex engines classify identically — Python's `$` matches before a trailing
+newline and its `\d` matches Unicode digits; ECMA's do neither.
 
 ## Minor versions — additive only
 
@@ -18,6 +21,12 @@ Consumer behaviour on a same-major, higher-minor script:
 - **Players:** unknown block types are omitted from the sequence and the "Block n of N"
   count entirely — no gap card, no error (FR-2). A script with zero renderable blocks
   renders the major-version can't-play state, never an empty Player.
+
+**Quiz question types are a closed set within a major** (stakeholder-ruled 2026-07-19):
+unlike block types, the quiz question `type` enum (`multipleChoice`, `shortAnswer`) is
+deliberately closed — a v1.x minor may never add a question type. New interactive forms
+ship as **new block types**, riding the block-level unknown-type fallback above, so older
+players omit them gracefully instead of hard-failing inside a known quiz block.
 
 ## Major versions — breaking
 
@@ -43,3 +52,4 @@ Every schema change requires:
 | Version | Date | Note |
 | --- | --- | --- |
 | 1.0 | 2026-07-19 | Initial schema. Six block types (slide, narration, quiz, diagram, model3d, simulation). |
+| 1.0 | 2026-07-19 | Pre-release hardening (review fix pass, stakeholder-approved; no bump — no published scripts exist): regex patterns rewritten for ECMA/Python engine parity (`[0-9]` classes, `(?!\n)$` end guards on `schema` and `language`); `assetRef.ref` tightened to `^asset://.+` (empty asset id no longer validates); wrappers' referential layer now also enforces uniqueness of block ids, question ids (per quiz block), and option ids (per question). |

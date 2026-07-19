@@ -204,6 +204,7 @@ claude-fable-5 (Claude Fable 5)
 ### Change Log
 
 - 2026-07-19: Implemented Story 1.1 — /schema package: JSON Schema 2020-12 documents (envelope + shared defs + six block types), 19-fixture corpus + expectations manifest, ajv (js/ESM) and jsonschema (py) validator wrappers with identical `validate()` semantics, renderer/versioning/reserved-extensions docs, minimal monorepo bootstrap (npm workspaces root, py package, GitHub Actions workflow).
+- 2026-07-19: Review fix pass (stakeholder-approved batches A/B/D/E + C rulings): regex engine parity (ASCII `[0-9]`, `re.fullmatch`, `(?!\n)$` schema-pattern guards — probes `"2.0\n"`, `"1.0\n"`, Arabic-Indic digits now reject identically in both languages); ajv if/then error-cascade filtered (error payloads now path-identical across languages, one error per invalid fixture); py schemas ship as package data with byte-equality drift test (non-editable install proven); js package marked private/UNLICENSED; uniqueness enforcement in both wrappers' referential layer (block ids / question ids per quiz / option ids per question) with fixtures; question-type closed-set rule recorded in versioning.md; `assetRef.ref` tightened to `^asset://.+`; expectations manifest carries per-fixture expected error path+message asserted in both suites; fixture-directory parity test; CI `permissions: contents: read` + dependency caching; `.gitignore` build/. Corpus now 27 fixtures; js 35 tests, py 36 tests, all green.
 
 ### File List
 
@@ -239,6 +240,15 @@ claude-fable-5 (Claude Fable 5)
 - schema/fixtures/invalid/quiz-mc-missing-correct-option.json (new)
 - schema/fixtures/invalid/quiz-mc-dangling-correct-option.json (new)
 - schema/fixtures/invalid/quiz-short-answer-empty-accepted.json (new)
+- schema/fixtures/invalid/duplicate-block-id.json (new — review fix pass, C1)
+- schema/fixtures/invalid/quiz-duplicate-question-id.json (new — review fix pass, C1)
+- schema/fixtures/invalid/quiz-duplicate-option-id.json (new — review fix pass, C1)
+- schema/fixtures/invalid/assetref-missing-transfersize.json (new — review fix pass, D2)
+- schema/fixtures/invalid/assetref-bad-scheme.json (new — review fix pass, D2)
+- schema/fixtures/invalid/assetref-empty-ref.json (new — review fix pass, C3/D2)
+- schema/fixtures/invalid/poster-missing-alttext.json (new — review fix pass, D2)
+- schema/fixtures/invalid/poster-missing-caption.json (new — review fix pass, D2)
+- schema/py/src/edon_lesson_schema/schemas/lesson/1.0/ (new — review fix pass, B1: packaged schema copies, drift-tested against schema/lesson/1.0)
 - schema/js/package.json (new — @edon/lesson-schema, ESM, plain JS)
 - schema/js/src/index.js (new — ajv 8.20 Ajv2020 wrapper)
 - schema/js/test/validate.test.js (new — Vitest, 23 tests)

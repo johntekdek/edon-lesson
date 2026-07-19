@@ -11,7 +11,8 @@ const Ajv2020 = Ajv2020Import.default ?? Ajv2020Import;
 export const SUPPORTED_MAJOR = 1;
 
 const SCHEMA_DIR = new URL("../../lesson/1.0/", import.meta.url);
-const VERSION_PATTERN = /^\d+\.\d+$/;
+// ASCII [0-9] to mirror the py wrapper exactly (Python's \d is Unicode-aware).
+const VERSION_PATTERN = /^[0-9]+\.[0-9]+$/;
 
 function loadSchema(relativePath) {
   return JSON.parse(readFileSync(new URL(relativePath, SCHEMA_DIR), "utf8"));
@@ -35,17 +36,54 @@ for (const schema of referencedSchemas) {
 const validateAgainstSchema = ajv.compile(lessonSchema);
 
 // Referential rules JSON Schema cannot express. Both wrappers (js + py)
-// implement these inside validate() with identical semantics.
+// implement these inside validate() with identical semantics: correctOptionId
+// membership, and uniqueness of block ids, question ids (per quiz block), and
+// option ids (per question). Loop structure mirrors the py wrapper so both
+// languages emit the same errors in the same order.
 function referentialErrors(script) {
   const errors = [];
   if (!script || !Array.isArray(script.blocks)) return errors;
+  const seenBlockIds = new Set();
   script.blocks.forEach((block, blockIndex) => {
-    if (!block || block.type !== "quiz" || !Array.isArray(block.questions)) return;
+    if (!block || typeof block !== "object") return;
+    if (typeof block.id === "string") {
+      if (seenBlockIds.has(block.id)) {
+        errors.push({
+          path: `/blocks/${blockIndex}/id`,
+          message: "must not duplicate another block's id",
+        });
+      }
+      seenBlockIds.add(block.id);
+    }
+    if (block.type !== "quiz" || !Array.isArray(block.questions)) return;
+    const seenQuestionIds = new Set();
     block.questions.forEach((question, questionIndex) => {
+      if (!question || typeof question !== "object") return;
+      if (typeof question.id === "string") {
+        if (seenQuestionIds.has(question.id)) {
+          errors.push({
+            path: `/blocks/${blockIndex}/questions/${questionIndex}/id`,
+            message: "must not duplicate another question's id in the same quiz block",
+          });
+        }
+        seenQuestionIds.add(question.id);
+      }
+      if (!Array.isArray(question.options)) {
+        return;
+      }
+      const seenOptionIds = new Set();
+      question.options.forEach((option, optionIndex) => {
+        if (!option || typeof option !== "object" || typeof option.id !== "string") return;
+        if (seenOptionIds.has(option.id)) {
+          errors.push({
+            path: `/blocks/${blockIndex}/questions/${questionIndex}/options/${optionIndex}/id`,
+            message: "must not duplicate another option's id in the same question",
+          });
+        }
+        seenOptionIds.add(option.id);
+      });
       if (
-        question &&
         question.type === "multipleChoice" &&
-        Array.isArray(question.options) &&
         typeof question.correctOptionId === "string"
       ) {
         const optionIds = question.options
@@ -79,6 +117,10 @@ export function validate(script) {
   const errors = [];
   if (!validateAgainstSchema(script)) {
     for (const error of validateAgainstSchema.errors) {
+      // ajv reports a `must match "then" schema` echo (keyword "if") for every
+      // failed if/then dispatch on top of the real leaf error; the py wrapper
+      // has no such cascade, so drop it to keep the payloads identical.
+      if (error.keyword === "if") continue;
       errors.push({ path: error.instancePath || "/", message: error.message });
     }
   }

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/model3d.schema.json",
+  "title": "Model3D Block payload",
+  "description": "modelRef points at a Curated Model Library glTF asset. Licence/attribution stays in library asset metadata + the frozen publish manifest (AD-9), NOT duplicated in the script; the viewer renders the attribution line from asset metadata (FR-16). Annotation text is Teacher-editable (A-28).",
+  "type": "object",
+  "required": ["modelRef", "poster", "annotations"],
+  "properties": {
+    "modelRef": {
+      "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/assetRef"
+    },
+    "poster": {
+      "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/poster"
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["number", "text"],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "anchor": {
+            "type": "object",
+            "required": ["x", "y", "z"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

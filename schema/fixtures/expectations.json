@@ -7,15 +7,98 @@
   "forward-compat/future-minor.json": "valid",
   "forward-compat/future-major.json": "unsupportedMajor",
   "forward-compat/future-major-invalid.json": "unsupportedMajor",
-  "invalid/missing-schema.json": "invalid",
-  "invalid/missing-tenant.json": "invalid",
-  "invalid/missing-version.json": "invalid",
-  "invalid/block-missing-id.json": "invalid",
-  "invalid/block-missing-citations.json": "invalid",
-  "invalid/block-missing-title.json": "invalid",
-  "invalid/citation-missing-excerpt.json": "invalid",
-  "invalid/simulation-missing-mode.json": "invalid",
-  "invalid/quiz-mc-missing-correct-option.json": "invalid",
-  "invalid/quiz-mc-dangling-correct-option.json": "invalid",
-  "invalid/quiz-short-answer-empty-accepted.json": "invalid"
+  "invalid/missing-schema.json": {
+    "outcome": "invalid",
+    "errorPath": "/",
+    "messageContains": "'schema'"
+  },
+  "invalid/missing-tenant.json": {
+    "outcome": "invalid",
+    "errorPath": "/",
+    "messageContains": "'tenantId'"
+  },
+  "invalid/missing-version.json": {
+    "outcome": "invalid",
+    "errorPath": "/",
+    "messageContains": "'version'"
+  },
+  "invalid/block-missing-id.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0",
+    "messageContains": "'id'"
+  },
+  "invalid/block-missing-citations.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0",
+    "messageContains": "'citations'"
+  },
+  "invalid/block-missing-title.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0",
+    "messageContains": "'title'"
+  },
+  "invalid/citation-missing-excerpt.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/citations/0",
+    "messageContains": "'excerpt'"
+  },
+  "invalid/simulation-missing-mode.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0",
+    "messageContains": "'mode'"
+  },
+  "invalid/quiz-mc-missing-correct-option.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/questions/0",
+    "messageContains": "'correctOptionId'"
+  },
+  "invalid/quiz-mc-dangling-correct-option.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/questions/0/correctOptionId",
+    "messageContains": "must reference the id of one of the question's options"
+  },
+  "invalid/quiz-short-answer-empty-accepted.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/questions/0/acceptedAnswers"
+  },
+  "invalid/duplicate-block-id.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/1/id",
+    "messageContains": "must not duplicate another block's id"
+  },
+  "invalid/quiz-duplicate-question-id.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/questions/1/id",
+    "messageContains": "must not duplicate another question's id in the same quiz block"
+  },
+  "invalid/quiz-duplicate-option-id.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/questions/0/options/1/id",
+    "messageContains": "must not duplicate another option's id in the same question"
+  },
+  "invalid/assetref-missing-transfersize.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/audioRef",
+    "messageContains": "'transferSize'"
+  },
+  "invalid/assetref-bad-scheme.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/audioRef/ref",
+    "messageContains": "asset://"
+  },
+  "invalid/assetref-empty-ref.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/audioRef/ref",
+    "messageContains": "asset://"
+  },
+  "invalid/poster-missing-alttext.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/poster",
+    "messageContains": "'altText'"
+  },
+  "invalid/poster-missing-caption.json": {
+    "outcome": "invalid",
+    "errorPath": "/blocks/0/poster",
+    "messageContains": "'caption'"
+  }
 }

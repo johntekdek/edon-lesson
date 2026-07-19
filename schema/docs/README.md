@@ -12,7 +12,7 @@ validator; Published Versions stay playable forever.**
 | `lesson/1.0/` | JSON Schema 2020-12 documents (`$id` base: `https://schema.edon.education/lesson/1.0/`) |
 | `fixtures/` | The shared fixture corpus + `expectations.json` (the cross-language agreement manifest) |
 | `js/` | `@edon/lesson-schema` — ajv wrapper, **toolchain/CI only** (the Player performs no runtime validation, AD-10). Plain JavaScript — no TypeScript ([HARD] §2) |
-| `py/` | `edon-lesson-schema` — jsonschema wrapper for the backend. Monorepo-internal: install editable |
+| `py/` | `edon-lesson-schema` — jsonschema wrapper for the backend. The schema documents ship inside the package as package data, so standard (non-editable) installs work; a test asserts the packaged copies stay byte-identical to `lesson/1.0` |
 | `docs/` | This documentation: [block-types.md](block-types.md), [versioning.md](versioning.md), [reserved-extensions.md](reserved-extensions.md) |
 
 ## Validator contract (identical in both languages)
@@ -27,8 +27,10 @@ validate(script) -> { ok: bool, unsupportedMajor: bool, errors: [{path, message}
 - `errors[].path` is a JSON-pointer-style instance path (`/blocks/0/citations/0`) — validation
   failures are attributable to a specific block and field (inline error pinning in Authoring).
 - Referential rules JSON Schema cannot express are implemented **inside `validate()` in both
-  wrappers with identical semantics**. Currently one: a multiple-choice question's
-  `correctOptionId` must reference the id of one of its `options`.
+  wrappers with identical semantics**: a multiple-choice question's `correctOptionId` must
+  reference the id of one of its `options`; block ids must be unique across the script
+  (AD-23 — they key citations, view marks, patches, progress rows); question ids must be
+  unique within their quiz block; option ids must be unique within their question.
 - Both test suites iterate the same `fixtures/expectations.json`; agreement between the two
   validators is asserted mechanically, per fixture.
 

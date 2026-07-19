@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/simulation.schema.json",
+  "title": "Simulation Block payload",
+  "description": "Dual mode (AD-12): template (launch default, OQ-5) requires templateId; freecode (tenant-flag-gated) requires bundleRef. params is the AD-12-pinned descriptor array the postMessage protocol and keyboard-operability checks consume; paramsDescription is the Floor-tier text alternative. The protocol document itself lands in Story 10.1.",
+  "type": "object",
+  "required": ["mode", "name", "params", "paramsDescription", "poster"],
+  "properties": {
+    "mode": {
+      "enum": ["template", "freecode"]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "templateId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bundleRef": {
+      "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/assetRef"
+    },
+    "params": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/paramDescriptor"
+      }
+    },
+    "paramsDescription": {
+      "type": "string",
+      "minLength": 1
+    },
+    "poster": {
+      "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/poster"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "mode": { "const": "template" } },
+        "required": ["mode"]
+      },
+      "then": {
+        "required": ["templateId"]
+      }
+    },
+    {
+      "if": {
+        "properties": { "mode": { "const": "freecode" } },
+        "required": ["mode"]
+      },
+      "then": {
+        "required": ["bundleRef"]
+      }
+    }
+  ],
+  "$defs": {
+    "paramDescriptor": {
+      "type": "object",
+      "required": ["id", "label", "type"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number" },
+        "default": {}
+      }
+    }
+  }
+}

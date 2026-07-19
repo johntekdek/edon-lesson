@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/diagram.schema.json",
+  "title": "Diagram Block payload",
+  "description": "svg is the sanitised SVG stored INLINE (stakeholder-ratified 2026-07-18): byte-exact review-gate integrity — what the Teacher approved is frozen in the Published Version, no swappable asset path for diagrams. The AD-13 sanitisation gate runs before any persist; the 200 kB per-diagram budget is checked by pipeline validators, not schema. altText/longDescription per the text-alternative contract.",
+  "type": "object",
+  "required": ["svg", "altText"],
+  "properties": {
+    "svg": {
+      "type": "string",
+      "minLength": 1
+    },
+    "altText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "longDescription": {
+      "type": "string"
+    },
+    "caption": {
+      "type": "string"
+    }
+  }
+}

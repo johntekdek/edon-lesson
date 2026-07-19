@@ -1,0 +1,37 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b02",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 1,
+  "title": "Quiz With Two Questions Sharing an Id",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "quiz",
+      "title": "Check your understanding",
+      "citations": [],
+      "questions": [
+        {
+          "id": "q-1",
+          "type": "shortAnswer",
+          "prompt": "Which property orders the modern periodic table?",
+          "feedback": "Atomic number — Moseley showed order by atomic number, not mass.",
+          "acceptedAnswers": ["atomic number"]
+        },
+        {
+          "id": "q-1",
+          "type": "shortAnswer",
+          "prompt": "This question reuses id q-1 — question ids must be unique within the quiz block.",
+          "feedback": "Duplicate question id.",
+          "acceptedAnswers": ["duplicate"]
+        }
+      ]
+    }
+  ]
+}

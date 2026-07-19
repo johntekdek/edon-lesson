@@ -8,6 +8,9 @@ on:
     branches: [main, master]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   js-validator:
     runs-on: ubuntu-latest
@@ -16,6 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
       - run: npm ci
       - run: npm test --workspace schema/js
 
@@ -27,6 +31,8 @@ jobs:
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
       # Interim install path: the root uv lockfile lands in Story 1.2; until then
       # CI installs the py wrapper editable against the pyproject pins.
       - run: uv pip install --system -e './schema/py[dev]'

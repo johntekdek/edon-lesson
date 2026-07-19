@@ -1,0 +1,33 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b08",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 1,
+  "title": "Model3D Poster Missing caption",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "model3d",
+      "title": "Atomic orbital model",
+      "citations": [],
+      "modelRef": {
+        "ref": "asset://models/atomic-orbitals.glb",
+        "transferSize": 2400000
+      },
+      "poster": {
+        "image": {
+          "ref": "asset://posters/atomic-orbitals.webp",
+          "transferSize": 84000
+        },
+        "altText": "3D model of a carbon atom's electron orbitals."
+      },
+      "annotations": []
+    }
+  ]
+}

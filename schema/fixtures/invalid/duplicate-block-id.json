@@ -1,0 +1,35 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b01",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 1,
+  "title": "Two Blocks Share the Same Slot Id",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "First block",
+      "citations": [
+        {
+          "sourceChunkId": "8",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "excerpt": "Elements in the same group possess the same number of valence electrons and therefore exhibit similar chemical characteristics."
+        }
+      ],
+      "body": "Elements in the same group share valence-electron counts."
+    },
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "Second block reuses blk-001 — slot ids must be unique (AD-23)",
+      "citations": [],
+      "body": "Duplicate slot id: citations, view marks, patches, and progress rows would attach ambiguously."
+    }
+  ]
+}
