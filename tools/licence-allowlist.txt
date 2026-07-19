@@ -1,0 +1,26 @@
+# Licence allowlist — the human contract behind the CI licence-audit gate
+# (project-context §5 [HARD]: permissive licences only; no GPL/AGPL runtime deps).
+# Each CI step maps these SPDX ids to its tool's vocabulary (pip-licenses uses
+# classifier names; license-checker uses SPDX expressions).
+# Additions require review — record the ruling beside the entry.
+MIT
+BSD-2-Clause
+BSD-3-Clause
+Apache-2.0
+ISC
+0BSD
+PSF-2.0
+Python-2.0
+Unlicense
+CC0-1.0
+BlueOak-1.0.0
+OFL-1.1
+# MPL-2.0: weak file-level copyleft; permitted for unmodified transitive deps only
+# (certifi CA bundle arrives with httpx). [ASSUMPTION] flagged for stakeholder
+# ratification in Story 1.2 completion notes.
+MPL-2.0
+# CC-BY-3.0/4.0: attribution licences on DATA-ONLY packages (spdx-exceptions,
+# caniuse-lite class) — no code copyleft. [ASSUMPTION] flagged for stakeholder
+# ratification in Story 1.2 completion notes.
+CC-BY-3.0
+CC-BY-4.0

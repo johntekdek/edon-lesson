@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/budgets/1.0/budgets.schema.json",
+  "title": "e-DON budgets.json contract",
+  "description": "The single budget source (AD-11/AD-18). All sizes are bytes (binary multipliers); temporal keys end in Ms and are milliseconds. Strict by design — this is internal config, not forward-compatible content: unknown keys are typos.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["player", "assets", "timings", "simulationChecks"],
+  "properties": {
+    "$comment": { "type": "string" },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["coreGzip", "chunks"],
+      "properties": {
+        "coreGzip": { "$ref": "#/$defs/bytes" },
+        "chunks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["model3d", "simulation", "fontsMotion"],
+          "properties": {
+            "model3d": { "$ref": "#/$defs/bytes" },
+            "simulation": { "$ref": "#/$defs/bytes" },
+            "fontsMotion": { "$ref": "#/$defs/bytes" }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gltfHard",
+        "gltfPreferred",
+        "poster",
+        "diagramSvg",
+        "narrationAudioPerBlock",
+        "narrationAudioPerLesson"
+      ],
+      "properties": {
+        "gltfHard": { "$ref": "#/$defs/bytes" },
+        "gltfPreferred": { "$ref": "#/$defs/bytes" },
+        "poster": { "$ref": "#/$defs/bytes" },
+        "diagramSvg": { "$ref": "#/$defs/bytes" },
+        "narrationAudioPerBlock": { "$ref": "#/$defs/bytes" },
+        "narrationAudioPerLesson": { "$ref": "#/$defs/bytes" }
+      }
+    },
+    "timings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["perceivedFirstSlideMs", "simReadyWatchdogMs", "narrationStartWatchdogMs"],
+      "properties": {
+        "perceivedFirstSlideMs": { "$ref": "#/$defs/millis" },
+        "simReadyWatchdogMs": { "$ref": "#/$defs/millis" },
+        "narrationStartWatchdogMs": { "$ref": "#/$defs/millis" }
+      }
+    },
+    "simulationChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transferBytes", "heapBytes", "longTaskMs"],
+      "properties": {
+        "transferBytes": { "$ref": "#/$defs/bytes" },
+        "heapBytes": { "$ref": "#/$defs/bytes" },
+        "longTaskMs": { "$ref": "#/$defs/millis" }
+      }
+    }
+  },
+  "$defs": {
+    "bytes": { "type": "integer", "minimum": 1 },
+    "millis": { "type": "integer", "minimum": 1 }
+  }
+}

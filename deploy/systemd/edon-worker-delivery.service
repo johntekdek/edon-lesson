@@ -1,0 +1,25 @@
+# e-DON Lesson Studio — delivery worker (outbox drain support jobs).
+# Ships inert in Story 1.2: Procrastinate lands with Epic 2 (AD-4/ADR-003).
+[Unit]
+Description=e-DON delivery worker (Procrastinate, queue: delivery)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=edon
+Group=edon
+WorkingDirectory=/opt/edon/app
+EnvironmentFile=/etc/edon/edon.env
+ExecStart=/opt/edon/venv/bin/procrastinate --app=edon.workers.app worker --queues=delivery
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/edon
+
+[Install]
+WantedBy=multi-user.target

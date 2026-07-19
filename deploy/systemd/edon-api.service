@@ -1,0 +1,27 @@
+# e-DON Lesson Studio — API service (spine deployment diagram).
+# Installed at /etc/systemd/system/ per docs/runbooks/deploy.md. nginx terminates TLS
+# and proxies to the localhost bind below.
+[Unit]
+Description=e-DON Lesson Studio API (uvicorn)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=edon
+Group=edon
+WorkingDirectory=/opt/edon/app
+EnvironmentFile=/etc/edon/edon.env
+ExecStart=/opt/edon/venv/bin/uvicorn edon.api.app:create_app --factory --host 127.0.0.1 --port 8100
+Restart=on-failure
+RestartSec=2
+
+# Least-privilege hardening (threat model, cross-cutting principle 2)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/edon
+
+[Install]
+WantedBy=multi-user.target

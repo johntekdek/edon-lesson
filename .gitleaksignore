@@ -1,0 +1,11 @@
+# Per-finding allowlist for the gitleaks gate (Story 1.2 triage, 2026-07-19).
+# Every entry needs a justification — never allowlist a real secret; rotate it instead.
+# NB: describe findings, don't quote them — quoted trigger text re-trips the scanner.
+
+# False positive: planning-artifact prose (a list of operator-managed nouns in the
+# epics doc) happens to match the generic-api-key regex. No secret present.
+fc3e4bec0b934ddf26542f6205e3c58f88b9ae1b:_bmad-output/planning-artifacts/epics.md:generic-api-key:104
+
+# False positive: SHA-256 CONTENT HASH in the BMAD tooling file manifest (integrity
+# checksum, not a credential).
+99049e7e7a28618bac7357f3baee43d7809e85d1:_bmad/_config/files-manifest.csv:generic-api-key:60

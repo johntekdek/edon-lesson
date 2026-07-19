@@ -5,7 +5,6 @@ from importlib import resources
 from pathlib import Path
 
 import pytest
-
 from edon_lesson_schema import validate
 from edon_lesson_schema.validator import _SCHEMA_FILES
 
@@ -34,8 +33,7 @@ def test_fixture_corpus_agreement(fixture: str, spec):
         # Negative-space DoD: the fixture must fail for its documented reason.
         contains = spec.get("messageContains")
         assert any(
-            e["path"] == spec["errorPath"]
-            and (contains is None or contains in e["message"])
+            e["path"] == spec["errorPath"] and (contains is None or contains in e["message"])
             for e in result["errors"]
         ), f"expected an error at {spec['errorPath']}, got {result['errors']}"
 
@@ -68,9 +66,7 @@ def test_version_string_engine_parity(version: str):
 def test_packaged_schema_documents_match_canonical():
     """B1 drift guard: the copies shipped as package data must stay
     byte-identical to the canonical documents in schema/lesson/1.0."""
-    packaged_root = resources.files("edon_lesson_schema").joinpath(
-        "schemas", "lesson", "1.0"
-    )
+    packaged_root = resources.files("edon_lesson_schema").joinpath("schemas", "lesson", "1.0")
     canonical = sorted(
         str(p.relative_to(CANONICAL_SCHEMA_DIR)).replace("\\", "/")
         for p in CANONICAL_SCHEMA_DIR.rglob("*.json")

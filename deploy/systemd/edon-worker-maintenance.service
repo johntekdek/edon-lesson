@@ -1,0 +1,25 @@
+# e-DON Lesson Studio — maintenance worker (retention, nightly jobs — AD-19).
+# Ships inert in Story 1.2: Procrastinate lands with Epic 2 (AD-4/ADR-003).
+[Unit]
+Description=e-DON maintenance worker (Procrastinate, queue: maintenance)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=edon
+Group=edon
+WorkingDirectory=/opt/edon/app
+EnvironmentFile=/etc/edon/edon.env
+ExecStart=/opt/edon/venv/bin/procrastinate --app=edon.workers.app worker --queues=maintenance
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/edon
+
+[Install]
+WantedBy=multi-user.target

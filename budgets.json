@@ -1,0 +1,29 @@
+{
+  "$comment": "Single budget source (AD-11/AD-18). Bytes everywhere; ms where the key says Ms. Consumed by: player CI, pipeline validators, ingest CLI, simulation check harness — via schema/budgets/budgets.schema.json. Binary multipliers (KiB/MiB). AD-11 realigned values govern (supersedes ADR-006's core 150 kB).",
+  "player": {
+    "coreGzip": 184320,
+    "chunks": {
+      "model3d": 256000,
+      "simulation": 61440,
+      "fontsMotion": 307200
+    }
+  },
+  "assets": {
+    "gltfHard": 10485760,
+    "gltfPreferred": 6291456,
+    "poster": 102400,
+    "diagramSvg": 204800,
+    "narrationAudioPerBlock": 819200,
+    "narrationAudioPerLesson": 10485760
+  },
+  "timings": {
+    "perceivedFirstSlideMs": 2500,
+    "simReadyWatchdogMs": 10000,
+    "narrationStartWatchdogMs": 3000
+  },
+  "simulationChecks": {
+    "transferBytes": 1572864,
+    "heapBytes": 134217728,
+    "longTaskMs": 1000
+  }
+}

@@ -1,0 +1,83 @@
+# CI gate set (Story 1.2; AR-25/AD-20/AD-11). Supersedes the Story 1.1 schema.yml —
+# both schema validator suites still run here, now via the root uv workspace + lockfile.
+# Security gates (audits, secret scan) live in security.yml.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check:no-ts
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test --workspaces --if-present
+
+  py:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --all-packages --all-extras
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run python -m pytest backend/tests schema/py/tests -q
+      - run: uv run lint-imports --config backend/pyproject.toml
+      - run: uv run python tools/lint_i18n_api.py
+
+  licence-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: npm ci
+      - run: bash tools/check-licences-js.sh
+      - run: uv sync --all-packages --all-extras
+      - run: bash tools/check-licences-py.sh
+
+  budgets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check:budgets
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: npm ci
+      - run: uv sync --all-packages --all-extras
+      - run: npx playwright test -c e2e

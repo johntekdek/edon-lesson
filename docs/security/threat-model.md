@@ -56,6 +56,14 @@ The primary adversary is an **authenticated student**: legitimate credentials, i
 - **T8.2** Identifiable data lands in telemetry or logs.
 - **Controls:** structural identity-stripping before any LLM/adapter call (no student identity crosses that boundary); pseudonymised ids in telemetry; defined log retention; maintained processor record.
 
+### S9 — Supply chain and CI (added Story 1.2, stakeholder opt-in 2026-07-19)
+- **T9.1** Malicious or vulnerable dependency version enters via either ecosystem (typosquat, dependency confusion, compromised upstream).
+- **T9.2** A compromised third-party GitHub Action tampers with builds or exfiltrates repository tokens.
+- **T9.3** An over-scoped CI token turns a workflow compromise into repo tampering or infrastructure access.
+- **T9.4** A secret committed to history is harvested later (by anyone with repo read — including a future contributor's leaked clone).
+- **T9.5** Lockfile drift — floating or unpinned dependencies make builds non-reproducible and un-auditable.
+- **Controls:** committed lockfiles (`package-lock.json`, `uv.lock`) are the only install paths; `npm audit` (high/critical) + `pip-audit` (any known vuln) blocking in CI, plus a weekly scheduled run so new advisories surface without commits; Dependabot update automation (npm, uv, github-actions); gitleaks full-history secret scan, blocking; every workflow defaults to `permissions: contents: read` with explicit job-level escalation only; CI holds **no** VPS/production credentials — deploys are operator-initiated (ADR-016), so GitHub compromise ≠ infrastructure compromise; the licence-audit gate doubles as a provenance tripwire (an unexpected licence flags an unexpected package).
+
 ## Cross-cutting principles
 
 1. **Server is the only authority.** Client output is never trusted for a security decision.

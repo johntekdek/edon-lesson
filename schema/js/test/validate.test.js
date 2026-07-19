@@ -28,9 +28,13 @@ describe("fixture corpus agreement", () => {
         const hit = result.errors.find(
           (error) =>
             error.path === spec.errorPath &&
-            (!spec.messageContains || error.message.includes(spec.messageContains)),
+            (!spec.messageContains ||
+              error.message.includes(spec.messageContains)),
         );
-        expect(hit, `expected an error at ${spec.errorPath}, got ${JSON.stringify(result.errors)}`).toBeTruthy();
+        expect(
+          hit,
+          `expected an error at ${spec.errorPath}, got ${JSON.stringify(result.errors)}`,
+        ).toBeTruthy();
       }
     });
   }
@@ -45,7 +49,9 @@ describe("fixture corpus agreement", () => {
   });
 
   it("unsupportedMajor short-circuits with empty errors even when the script is also schema-invalid", () => {
-    const result = validate(loadFixture("forward-compat/future-major-invalid.json"));
+    const result = validate(
+      loadFixture("forward-compat/future-major-invalid.json"),
+    );
     expect(result).toEqual({ ok: false, unsupportedMajor: true, errors: [] });
   });
 });
@@ -61,22 +67,30 @@ describe("version-string engine parity", () => {
       const result = validate(script);
       expect(result.unsupportedMajor).toBe(false);
       expect(result.ok).toBe(false);
-      expect(result.errors.some((error) => error.path === "/schema")).toBe(true);
+      expect(result.errors.some((error) => error.path === "/schema")).toBe(
+        true,
+      );
     });
   }
 });
 
 describe("error attribution", () => {
   it("pins a missing citation excerpt to the citation's path", () => {
-    const result = validate(loadFixture("invalid/citation-missing-excerpt.json"));
+    const result = validate(
+      loadFixture("invalid/citation-missing-excerpt.json"),
+    );
     expect(result.ok).toBe(false);
     expect(
-      result.errors.some((error) => error.path.startsWith("/blocks/0/citations/0")),
+      result.errors.some((error) =>
+        error.path.startsWith("/blocks/0/citations/0"),
+      ),
     ).toBe(true);
   });
 
   it("pins a dangling correctOptionId to the question field", () => {
-    const result = validate(loadFixture("invalid/quiz-mc-dangling-correct-option.json"));
+    const result = validate(
+      loadFixture("invalid/quiz-mc-dangling-correct-option.json"),
+    );
     expect(result.ok).toBe(false);
     expect(result.errors).toEqual([
       {
@@ -89,6 +103,8 @@ describe("error attribution", () => {
   it("pins missing lesson-level required fields to the root", () => {
     const result = validate(loadFixture("invalid/missing-tenant.json"));
     expect(result.ok).toBe(false);
-    expect(result.errors.some((error) => error.message.includes("tenantId"))).toBe(true);
+    expect(
+      result.errors.some((error) => error.message.includes("tenantId")),
+    ).toBe(true);
   });
 });

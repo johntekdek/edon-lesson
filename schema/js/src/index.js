@@ -63,7 +63,8 @@ function referentialErrors(script) {
         if (seenQuestionIds.has(question.id)) {
           errors.push({
             path: `/blocks/${blockIndex}/questions/${questionIndex}/id`,
-            message: "must not duplicate another question's id in the same quiz block",
+            message:
+              "must not duplicate another question's id in the same quiz block",
           });
         }
         seenQuestionIds.add(question.id);
@@ -73,11 +74,17 @@ function referentialErrors(script) {
       }
       const seenOptionIds = new Set();
       question.options.forEach((option, optionIndex) => {
-        if (!option || typeof option !== "object" || typeof option.id !== "string") return;
+        if (
+          !option ||
+          typeof option !== "object" ||
+          typeof option.id !== "string"
+        )
+          return;
         if (seenOptionIds.has(option.id)) {
           errors.push({
             path: `/blocks/${blockIndex}/questions/${questionIndex}/options/${optionIndex}/id`,
-            message: "must not duplicate another option's id in the same question",
+            message:
+              "must not duplicate another option's id in the same question",
           });
         }
         seenOptionIds.add(option.id);

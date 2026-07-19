@@ -1,0 +1,20 @@
+# Root uv workspace (Story 1.2). Virtual root — no [project]; members own their metadata.
+# One committed uv.lock at this level is the single Python dependency pin (AR-25).
+
+[tool.uv.workspace]
+members = ["backend", "schema/py"]
+
+# One toolchain (AR-25): ruff is the only Python linter/formatter, configured once here.
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = ["_bmad", "_bmad-output", ".agents"]
+
+[tool.ruff.lint]
+# T20 (flake8-print) mechanizes project-context §4 "no bare print statements".
+select = ["E", "F", "W", "I", "UP", "B", "T20"]
+
+[tool.ruff.lint.per-file-ignores]
+# Story 1.1 package: the over-length lines are cross-language parity-critical error
+# message strings (asserted byte-identical against the js wrapper) — not rewrappable.
+"schema/py/**" = ["E501"]

@@ -1,0 +1,26 @@
+# e-DON Lesson Studio — generation worker template (instantiate: edon-worker-generation@1).
+# Ships inert in Story 1.2: Procrastinate and the generation queue land with Epic 2
+# (AD-4/ADR-003). The ExecStart below is the contract; do not enable before Epic 2.
+[Unit]
+Description=e-DON generation worker %i (Procrastinate, queue: generation)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=edon
+Group=edon
+WorkingDirectory=/opt/edon/app
+EnvironmentFile=/etc/edon/edon.env
+ExecStart=/opt/edon/venv/bin/procrastinate --app=edon.workers.app worker --queues=generation
+Restart=on-failure
+RestartSec=5
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/edon
+
+[Install]
+WantedBy=multi-user.target

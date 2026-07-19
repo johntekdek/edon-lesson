@@ -1,0 +1,13 @@
+# Prettier scope is JS/JSX only (root scripts pass the glob). These ignores keep it
+# out of vendored trees and signed-off artifacts entirely. Canonical schema JSON and
+# the packaged copies must stay byte-stable (the py drift test compares them).
+node_modules/
+_bmad/
+_bmad-output/
+.agents/
+.venv/
+docs/
+fixtures/
+coverage/
+playwright-report/
+test-results/

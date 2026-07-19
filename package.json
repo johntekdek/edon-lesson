@@ -1,7 +1,35 @@
 {
   "name": "edon-lesson",
+  "version": "0.0.0",
   "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
-    "schema/js"
-  ]
+    "schema/js",
+    "player",
+    "authoring"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "format:check": "prettier --check \"**/*.{js,jsx}\"",
+    "format": "prettier --write \"**/*.{js,jsx}\"",
+    "test": "npm test --workspaces --if-present",
+    "check:no-ts": "bash tools/check-no-ts.sh",
+    "check:budgets": "node tools/check-budgets.mjs",
+    "check:licences:js": "bash tools/check-licences-js.sh",
+    "test:e2e": "playwright test -c e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@playwright/test": "~1.61.0",
+    "ajv": "~8.20.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "globals": "^15.0.0",
+    "license-checker-rseidelsohn": "^4.4.0",
+    "prettier": "^3.0.0"
+  }
 }

@@ -42,9 +42,7 @@ def _build_validator() -> Draft202012Validator:
     lesson_schema = None
     resources_list = []
     for relative in _SCHEMA_FILES:
-        document = json.loads(
-            _SCHEMA_ROOT.joinpath(*relative.split("/")).read_text("utf-8")
-        )
+        document = json.loads(_SCHEMA_ROOT.joinpath(*relative.split("/")).read_text("utf-8"))
         if relative == "lesson.schema.json":
             lesson_schema = document
         resources_list.append((document["$id"], Resource.from_contents(document)))
@@ -116,9 +114,7 @@ def _referential_errors(script) -> list[dict]:
             if question.get("type") == "multipleChoice" and isinstance(
                 question.get("correctOptionId"), str
             ):
-                option_ids = [
-                    option.get("id") for option in options if isinstance(option, dict)
-                ]
+                option_ids = [option.get("id") for option in options if isinstance(option, dict)]
                 if question["correctOptionId"] not in option_ids:
                     errors.append(
                         {

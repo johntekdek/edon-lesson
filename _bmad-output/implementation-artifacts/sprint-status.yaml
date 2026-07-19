@@ -63,7 +63,7 @@ development_status:
   # ===== Epic 1: Lesson Script Schema & Platform Foundation (M1) =====
   epic-1: in-progress
   1-1-lesson-script-schema-v1-0-package: done
-  1-2-monorepo-scaffold-ci-gates-and-deploy-skeleton: backlog
+  1-2-monorepo-scaffold-ci-gates-and-deploy-skeleton: review
   1-3-tenant-substrate-tenantcontext-rls-migrations-baseline: backlog
   1-4-identity-credentials-five-kinds-plus-dev-token-cli: backlog
   1-5-llm-adapter-two-drivers-per-workload-config: backlog
