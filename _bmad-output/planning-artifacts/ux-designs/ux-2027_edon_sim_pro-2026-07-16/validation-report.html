@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UX Design Validation: 2027_edon_sim_pro</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .reviewer-source {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="title">
+        <h1>2027_edon_sim_pro — UX Design Validation Report</h1>
+        <div class="subtitle">_bmad-output/planning-artifacts/ux-designs/ux-2027_edon_sim_pro-2026-07-16/DESIGN.md · EXPERIENCE.md</div>
+      </div>
+    </header>
+
+    <div class="synthesis">
+      <p>The spine pair is a genuinely source-extractable contract: all five UJs are accounted for (UJ-4's exclusion stated three times), the 24-component vocabulary matches exactly across both files (24/24 parity, identical order), every frontmatter token carries a value and every <code>{path.to.token}</code> reference resolves, and every stated contrast ratio was verified computationally and is correct. The rubric's one high-severity internal contradiction (Flow 1 shipping the exact copy string the Voice and Tone table bans) and three medium gaps (the unseen gold dot with behavior but no visual spec, the Completion summary surface with no anatomy, no failed-save/offline state for the Authoring UI) were judged non-blocking for architecture — and none survived the day.</p>
+      <p>The two adversarial lenses shifted the picture along two themes. First, <em>state survival on hostile floor devices</em>: the low-spec/embedding review showed the spines had modeled the floor device as a featureless browser tab when the field device is a hostile one — it kills the tab, drops the POST, reloads the page — so page reload mid-lesson, quiz submission on a dying connection, token expiry mid-review, and the Moodle mobile app as a client were unspecified or held up only by a narrative sentence in a flow. Second, <em>text alternatives for AI-generated visual content as a schema-shaped gap</em>: the accessibility review found no text-alternative contract anywhere for the content that is the product's point, inside a schema advertised as playable forever (I-3) — deferring it would make early Published Versions permanently inaccessible. Every critical, high, and medium finding — 4 critical, 10 high, 15 medium across the three lenses as enumerated — and 17 of the 20 lows were applied to the spines in a same-day fix pass; the questions needing stakeholder or architecture ownership were converted to Open Items 9–17, and three rubric lows were consciously accepted as-is.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card">
+        <div class="dim-name">Flow coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Token completeness</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Component coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">State coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Visual reference coverage</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Bloat &amp; overspecification</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Inheritance discipline</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Shape fit</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">strong</div>
+      </div>
+    </div>
+
+    <!-- 1. Flow coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Flow coverage</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Extracted UJ-1..UJ-5 from PRD §2.3 and walked FR-1..FR-29 against Key Flows, Component Patterns, and State Patterns. Flows 1–4 map to UJ-1, UJ-2, UJ-3, UJ-5 with journey names and protagonist names (Dr. Amina, Chinedu, Ngozi) verbatim from the PRD; each has numbered steps, a bold Climax beat, and failure paths. UJ-4's exclusion is stated where required (Foundation operator fence, IA surface-closure line, Key Flows preamble). Flow 5 (Reported diagram triage, FR-28) is an earned addition — it closes the governance loop no UJ names. FR sweep: every Teacher/Student-surfaced FR lands in a flow, component row, or state row; FR-24/FR-25/FR-27 are correctly left as backend concerns with only their UX edges surfaced.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">UJ-1's off-target-draft edge case is realized mechanically but not walked in Flow 1's failure paths</h3>
+              <span class="finding-location">EXPERIENCE § Key Flows → Flow 1</span>
+            </header>
+            <div class="finding-note">The Generate form row and Discard Draft state cover the PRD's discard → refine → regenerate edge, but Flow 1's failure paths never walk it.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Flow 1 failure path now walks off-target draft → discard → prefilled Generate form → explicit regenerate.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Flow 4's "Failure path" is a colleague-duplication alternate path, not a failure</h3>
+              <span class="finding-location">EXPERIENCE § Key Flows → Flow 4</span>
+            </header>
+            <div class="finding-note">Mislabel — consumers scan for an error state that isn't one.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — relabeled "Alternate path".</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 2. Token completeness -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Token completeness</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>All frontmatter tokens (16 colors, 8 typography roles, 4 radii, 8 spacing entries, 17 component token objects) carry values — no critical misses. Every <code>{path.to.token}</code> reference in the prose of both files resolves; the <code>player-ui</code> note-form token correctly follows the platform-convention pattern. Stated contrast ratios were recomputed and all check out: primary on white 6.9:1, accent-ink on accent 7.6:1, ink-secondary on white 6.7:1, error on white 6.4:1, gold on white 1.7:1 (documented as a prohibition).</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Two token references carry inline size overrides that exist only in prose</h3>
+              <span class="finding-location">DESIGN § Components (Button set, Player slides)</span>
+            </header>
+            <div class="finding-note">Buttons use "{typography.label} at 15px", Player slides "{typography.body} at 17px on phones" — a consumer generating a theme from the frontmatter alone misses both.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Accepted as-is — inline size overrides consciously kept in prose rather than minting new tokens.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Two meaning-carrying pairs used by components have no stated ratio</h3>
+              <span class="finding-location">DESIGN § Colors</span>
+            </header>
+            <div class="finding-note">primary-deep on primary-wash (≈8.7:1, passes) and error on error-wash (≈5.7:1, passes) are used but unlisted, so the Do's-table AA pledge isn't checkable against them.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — both ratios added to § Colors.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 3. Component coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Component coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>The two tables match exactly: 24 rows in DESIGN § Components and 24 rows in EXPERIENCE § Component Patterns, identical names, even identical order. Each row carries real rules on both sides — visual anatomy with token references in DESIGN, behavioral contracts with FR citations in EXPERIENCE. No one-word descriptions. The misses are elements referenced outside the tables.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Session-local "unseen" gold dot has behavior but no visual spec — and brushes the design's own gold-contrast rule</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Block rail; DESIGN § Components → Block rail</span>
+            </header>
+            <div class="finding-note">A small solid-gold dot on the light rail is a meaning-carrying gold element at 1.7:1 — banned by DESIGN's own rule and short of WCAG 1.4.11's 3:1 for UI indicators.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — dot specced in the Block rail row and ringed with accent-ink, resolving the contrast tension.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Completion summary is an IA surface with states but no visual anatomy anywhere</h3>
+              <span class="finding-location">EXPERIENCE § Information Architecture; DESIGN § Components</span>
+            </header>
+            <div class="finding-note">The only Student-facing screen with no anatomy (tick list, score status line, attempts line, jump-back links) in either component table.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Completion summary row added to both component tables (25th component).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Cold-load skeletons are prescribed but no skeleton visual exists in DESIGN</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Cold load</span>
+            </header>
+            <div class="finding-note">Fill token and shimmer-vs-static were unspecified.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — static skeleton blocks specified (no shimmer, per the Player motion budget).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Three small elements referenced in prose lack specs</h3>
+              <span class="finding-location">EXPERIENCE § IA / Lesson card / Flow 5</span>
+            </header>
+            <div class="finding-note">Persistent-header Course Context chip, Lesson card version-history line, Diagram review queue badge.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — a clause each in the relevant DESIGN rows.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4. State coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>State coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Walked every IA surface against the 33-row State Patterns table plus component-row states. Coverage is unusually complete: Course home (cold, empty, generating, failed, budget-paused, idempotent-route), Review Workspace (regenerating, validation error, check failed, discard, admin banner), Publish dialog (pass/fail/succeeded), Relaunch notice, Player (cold, connectivity loss, unknown Block, major-version mismatch, version pinning, flagged-off Simulations, not-available), Quiz (syncing, writeback failure, attempts exhausted), completion, and eight diagram-message states including the Rate Limit vs Quota split the PRD Glossary demands.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">No failed-save/offline state for the Authoring UI</h3>
+              <span class="finding-location">EXPERIENCE § Interaction Primitives / § State Patterns</span>
+            </header>
+            <div class="finding-note">"Saved" text has no counterpart for a save that fails or connectivity loss mid-review — a Teacher could lose edits silently, which the spine elsewhere prohibits as a principle.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — autosave-failure state row added ("Not saved — retrying", edits retained locally, never silent), part of the durability-rules fix pass.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Cold load row names Course home and Player only; Review Workspace cold load unspecified</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Cold load</span>
+            </header>
+            <div class="finding-note">Rail + editor skeleton missing from the row.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — row extended.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Generate form pre-submit validation (FR-4 empty-topic rejection) has no explicit state</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Generate form</span>
+            </header>
+            <div class="finding-note">Draft validation errors are covered; the pre-submit empty-topic case wasn't.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — clause added to the Generate form row.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Player script-load failure (bundle or Published Version failing to fetch) untreated</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns</span>
+            </header>
+            <div class="finding-note">Lazy-asset failure was covered; the script itself failing wasn't.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — state added reusing the calm can't-play voice of the major-version state.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5. Visual reference coverage -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Visual reference coverage</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>At review time <code>mockups/</code> and <code>wireframes/</code> did not exist; key-screen mocks were being rendered in parallel (Review Workspace desktop, Player on low-spec phone including fallback states, Diagram chat message) — not penalized. The spines correctly state that spines win on conflict with any mock or import.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">No composition-reference pointers in the IA section</h3>
+              <span class="finding-location">EXPERIENCE § Information Architecture</span>
+            </header>
+            <div class="finding-note">Neither spine carried the exemplars' "→ Composition reference: mockups/…" pointers yet.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — three key-screen mocks promoted to <code>mockups/</code> (key-review-workspace.html, key-player-mobile.html, key-diagram-chat.html) and composition-reference links added under IA, spine-wins rule kept.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 6. Bloat & overspecification -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Bloat &amp; overspecification</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>DESIGN carries editorial voice where allowed (Brand &amp; Style, Colors) and stays tabular in Components; the pixel values present (44/48px targets, 280/320/640/720px panes) are load-bearing under the device floor and accessibility floor, not decoration. EXPERIENCE prose is functional; the only narrative flourishes are inside Key Flows climaxes, which the exemplars sanction. No source restatement beyond traceability parentheticals, which earn their keep as inheritance anchors.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">The no-webfonts/flat-Player rule is restated in ~7 places</h3>
+              <span class="finding-location">DESIGN ×6; EXPERIENCE ×2</span>
+            </header>
+            <div class="finding-note">Deliberate emphasis, but a future change touches seven sites.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — <code>{typography.player-ui}</code> kept as the single normative statement, other sites reference it.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 7. Inheritance discipline -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Inheritance discipline</h2>
+          <span class="verdict-pill verdict-adequate">adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>All four frontmatter source paths resolve from the repo root (verified on disk). UJ names, protagonist names, and journey titles are verbatim PRD §2.3. Spot-checked ~30 FR/OQ/A/I citations across both spines against the PRD — all accurate, including the subtle ones (A-27, A-28, A-34, A-35, OQ-15, project-context §2 [HARD] no-TypeScript, §6 unknown-block rule). Glossary terms are used verbatim and correctly capitalized in both files. Component names identical across all four sections. One real break:</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Internal copy contradiction: Flow 1 ships the exact "under 5 minutes" promise the Voice and Tone table bans</h3>
+              <span class="finding-location">EXPERIENCE § Key Flows → Flow 1 step 2 vs § Voice and Tone / § State Patterns</span>
+            </header>
+            <div class="finding-note">Flow copy is what story-dev lifts verbatim; the spine shipped both the rule ("never promise a hard number" — SM-1 is a median, p90 is 2× it, A-34) and its violation.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Flow 1 string changed to the V&amp;T Do-column copy ("Usually ready in a few minutes.").</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Header vocabulary list names 10 Glossary terms "verbatim" but the spine correctly relies on ~7 more</h3>
+              <span class="finding-location">EXPERIENCE header</span>
+            </header>
+            <div class="finding-note">Usage is correct throughout; the list is just incomplete.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Accepted (resolved by simplification) — header line now reads "PRD Glossary verbatim throughout" instead of enumerating.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">SIL OFL font licences grounded in project-context §5, which never mentions OFL</h3>
+              <span class="finding-location">DESIGN § Typography</span>
+            </header>
+            <div class="finding-note">OFL webfonts are almost certainly fine (and the Player ships none), but the citation overstates what §5 grants.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — rephrased to record licence metadata when the dependency lands, OFL acceptability confirmed in architecture per §5.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- 8. Shape fit -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Shape fit</h2>
+          <span class="verdict-pill verdict-strong">strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>DESIGN: all eight body sections present in canonical order; frontmatter carries name and description per spec plus the spine-pair extensions. EXPERIENCE: all required defaults present plus a warranted Responsive &amp; Platform section. The omitted default (Inspiration &amp; Anti-patterns) is defensible — its rejected-pattern payload already lives in three enforced homes. All three invented sections earn their place: Capability Tiers &amp; Degradation Ladder converts the product's hardest constraint into a testable three-tier contract architecture will quote; the Moodle Embedding Contract makes "feels native" verifiable behavior; Open Items for Stakeholder operationalizes the run's batched-confirmation discipline with every item traceable, none silently adopted.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">The two invented constraint sections sit between IA and Voice and Tone, splitting the default sequence</h3>
+              <span class="finding-location">EXPERIENCE section order</span>
+            </header>
+            <div class="finding-note">Harmless; Capability Tiers reads naturally right after Foundation.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Accepted as-is — placement consciously kept (reads naturally where it is); explicitly a do-not-block item.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Accessibility reviewer section -->
+    <section class="reviewer-section">
+      <details>
+        <summary>
+          <h2>Accessibility review (adversarial, WCAG 2.1 AA lens)</h2>
+          <span class="reviewer-source">review-accessibility.md</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Reviewer lens: WCAG 2.1 AA (the spines' own recommendation for OQ-7), screen reader, keyboard/switch, low-vision/zoom, cognitive, vestibular — on Android 8-era student hardware. In the reviewer's words: the pragmatic floor is better than most MVP floors — transcripts as real text, poster fallbacks with full text alternatives, glyph+text paired with color, no autoplay, no hover-only affordances, reorder buttons beside drag; the contrast arithmetic was independently recomputed and every listed pair genuinely passes AA. But the floor was not AA-adequate as written, and its weakest points are exactly where the product's identity lives: <em>there was no text-alternative contract anywhere for the AI-generated visual content that is the product's point</em> — a gap baked into a schema advertised as playable forever (I-3) — and the floor's two boldest claims (simulation keyboard access "enforced via pre-publish checks", diagram "labels legible at phone width") were assertions with no mechanism behind them. The color system's own rule ("gold never carries meaning on light surfaces") was violated twice by the design's own components.</p>
+            <p>Counts as the review states them: 1 critical · 5 high · 7 medium · 4 low (eight medium findings are enumerated below — the review's own count line undercounts by one). All were applied to the spines in the same-day fix pass; the schema-field half of F-1 is escalated as Open Item 15.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">F-1 — No text-alternative contract for AI-generated visual content; the omission is schema-shaped and permanent</h3>
+              <span class="finding-location">DESIGN § Components (Diagram, Poster, Model3D, chat message); EXPERIENCE § Accessibility Floor</span>
+            </header>
+            <div class="finding-note">Nothing required alt text for lesson Diagram SVGs or posters, and the allowlist-based Sanitisation would itself strip whatever accessibility markup the LLM emitted — unlabeled graphics in the one channel that bypasses the Review Gate, made permanent by Schema v1.0 immutability (I-3).</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine (text-alternative contract, Teacher-editable via the A-28 map extension, plus Sanitisation allowlist entries for <code>&lt;title&gt;</code>/<code>&lt;desc&gt;</code>/<code>role="img"</code>/<code>aria-label(ledby)</code>); the schema-field addition is escalated as <strong>Open Item 15</strong> (strongly recommended before schema freeze; owner: stakeholder + Architect).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">F-2 — Quiz instant feedback is silent to screen readers; correct-answer reveal is color/border-only</h3>
+              <span class="finding-location">EXPERIENCE § Accessibility Floor + § Component Patterns → Quiz block</span>
+            </header>
+            <div class="finding-note">The single most frequent state change a Student experiences was absent from the aria-live inventory, and the revealed correct answer was an outline only — a direct WCAG 1.4.1 failure inside the one component the design otherwise got right.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — per-question feedback added to the live-region inventory; revealed answer gets glyph + "Correct answer" text prefix, programmatically associated.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">F-3 — Block navigation swaps content in place with no focus management or announcement spec</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Player shell; § Moodle Embedding Contract</span>
+            </header>
+            <div class="finding-note">A screen-reader user presses Next and perceives nothing — linear playback, the Player's whole job (FR-13), was effectively unusable non-visually.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — on block change focus moves to the new block's heading, "Block n of N — {title}" announced, progress header given a programmatic reading, block headings made real headings.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">F-4 — Simulation keyboard accessibility "enforced" by checks that don't check it</h3>
+              <span class="finding-location">EXPERIENCE § Accessibility Floor vs PRD FR-17/A-35</span>
+            </header>
+            <div class="finding-note">A-35's minimum check list contained no keyboard check — a prompt-contract line with no verification is a hope, not a floor, and LLM-generated code is precisely the code that will violate it.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — A-35 check list extended (declared parameters must map to native form controls or keyboard-operable equivalents, asserted in the check harness); native controls required in the generation contract; poster parameter-description text named as the last-resort equivalent.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">F-5 — "Labels legible at phone width" and "pinch zoom native" are outcomes with no mechanism; the embedding contract can forbid the only recourse</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Diagram block, Flow 3; § Moodle Embedding Contract</span>
+            </header>
+            <div class="finding-note">No rule produced legibility at a ~328px column, and the claimed recourse (pinch zoom) is host-controlled — a theme with <code>user-scalable=no</code> left a WCAG 1.4.4 failure with no owner.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — minimum rendered label size in the diagram generation/validation contract, an in-container enlarge affordance, and <code>user-scalable=yes</code> stated as a mod_edonlesson integration requirement.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">F-6 — The diagram chat message is a third surface the accessibility floor forgot; its governance control was a 12px text button</h3>
+              <span class="finding-location">EXPERIENCE § Accessibility Floor ("both surfaces"); DESIGN § Components → Diagram chat message</span>
+            </header>
+            <div class="finding-note">The only surface where AI content reaches Students unreviewed inherited no keyboard or target-size rule, and the FR-28 report control was an unhittable target — the governance loop only works if reporting is operable.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — floor scope extended to all three surfaces; report control given ≥44px hit area and ≥14px label; focus order, accessible name, and live-region announcements specified for the chat card.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-7 — The design violates its own "gold never carries meaning on light surfaces" rule twice</h3>
+              <span class="finding-location">DESIGN § Colors vs § Components → Regenerate control; EXPERIENCE → Block rail</span>
+            </header>
+            <div class="finding-note">The Regenerate control's 1px gold border (1.57:1 against its wash) and the unseen gold dot (1.73:1 on white, no screen-reader equivalent) — the Review Gate's integrity cue was invisible to low-vision Teachers and nonexistent for blind ones.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — dot ringed with accent-ink and given an accessible state on the rail item; sweep demoted to decorative with the label swap named as the accessible state signal.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-8 — Secondary/quiet button boundaries fail non-text contrast</h3>
+              <span class="finding-location">DESIGN § Components → Button set; border-strong token</span>
+            </header>
+            <div class="finding-note">border-strong #AFBDB6 on white computed to 1.95:1 — well under WCAG 1.4.11's 3:1; "what is clickable" should not depend on inference in an authoring UI for moderate-digital-literacy users.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — border-strong darkened to #7E8C85 (≈3.5:1).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-9 — Preview overlay: no focus trap, initial focus, or restore spec</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Preview overlay; § Interaction Primitives</span>
+            </header>
+            <div class="finding-note">Untrapped, Tab walked into the obscured workspace behind the scrim; same gap applied to the Publish dialog.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — one overlay rule in Interaction Primitives: trap Tab, focus to overlay title on open, return to invoker on close.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-10 — Three-pane workspace has no landmark or skip structure; the rail was a keyboard slog</h3>
+              <span class="finding-location">EXPERIENCE § Responsive &amp; Platform; § Accessibility Floor</span>
+            </header>
+            <div class="finding-note">"Tab order = reading order" meant ~33 tab stops through the rail before the editor, on every trip.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — panes named as landmarks, rail made one tab stop with arrow-key traversal and documented reorder keys, skip-to-editor link added.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-11 — Model3D: orbit had no non-drag equivalent and annotation markers were sub-target-size</h3>
+              <span class="finding-location">EXPERIENCE § Interaction Primitives; DESIGN § Components → Model3D viewer</span>
+            </header>
+            <div class="finding-note">"Everything the canvas does is also available as buttons" was contradicted by its own parenthetical — orbit, the point of a 3D model, was drag-only; markers were 24px in a Player mandating ≥48px targets.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — rotate controls/arrow keys on a focusable named canvas, 48px marker hit areas, annotations panel toggleable from the button row on Full tier too.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-12 — No reduced-motion consideration anywhere</h3>
+              <span class="finding-location">DESIGN (whole document); EXPERIENCE § Interaction Primitives</span>
+            </header>
+            <div class="finding-note">Sweeps, progress fills, skeletons, generation progress — not one line honored prefers-reduced-motion.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — global reduced-motion rule as part of the motion budget (static state changes, stepped progress); noted as also cheaper on the device floor.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-13 — 12px caption was load-bearing, against the design's own 14px minimum</h3>
+              <span class="finding-location">DESIGN § Typography vs § Components</span>
+            </header>
+            <div class="finding-note">The 14px floor was evaded by classifying meaning-bearing text as "caption" — the governance-critical FR-28 AI-provenance label rendered at 12px on a phone.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — meaning-bearing text (AI content label, poster explanations, quiz feedback) raised to ≥14px; 12px kept only for genuine metadata.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">F-14 — Cognitive traps for moderate-digital-literacy Teachers: three overlapping review-state signals, two "Regenerate" verbs, an unannounced reroute</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Status chip / Block rail / Generate form; § State Patterns</span>
+            </header>
+            <div class="finding-note">No stated rule for when "Needs review" clears — ambiguity feeding exactly the rubber-stamp risk SM-C1 watches for; the FR-7 idempotency reroute was unannounced for SR users.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — chip lifecycle defined, whole-lesson action renamed with a Block-count confirm, idempotency banner added to the live-region inventory with focus moved on reroute.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">F-15 — Contrast claims verified; one rounds generously</h3>
+              <span class="finding-location">DESIGN § Colors</span>
+            </header>
+            <div class="finding-note">Primary/white computes to 6.84:1, claimed 6.9 — still comfortably AA, but a document that stakes its credibility on computed ratios shouldn't round up.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — restated 6.8:1.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">F-16 — Unknown-Block omission consistent, but two edges unspecified</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Unknown Block type; § Component Patterns → Player shell</span>
+            </header>
+            <div class="finding-note">Progress-header marks had no AT equivalent; the all-Blocks-unknown edge ("Block 0 of 0") was undefined; completion must count the same renderable set as the Student's Player version.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — accessible list equivalent for header marks (reusing the Completion summary pattern), zero-renderable edge renders the can't-play state; the renderable-set/completion question flagged to architecture alongside Open Item 11.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">F-17 — Language attributes unspecified despite NFR-8 doing the hard part</h3>
+              <span class="finding-location">EXPERIENCE § Voice and Tone; PRD NFR-8</span>
+            </header>
+            <div class="finding-note">The schema carries language tags; nothing said the Player or chat card sets <code>lang</code> on rendered content regions.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Player content regions and diagram cards set <code>lang</code> from the script's language tag.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">F-18 — Small ARIA-state and live-region hygiene gaps</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns (Narration control, progress card, budget pause)</span>
+            </header>
+            <div class="finding-note">Toggle pressed/expanded semantics, elapsed-time live-region exclusion, disabled-form reason discoverability, SpeechSynthesis-over-screen-reader acknowledgment.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — hygiene paragraph added to the Accessibility Floor.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Low-spec / embedding reviewer section -->
+    <section class="reviewer-section">
+      <details>
+        <summary>
+          <h2>Low-spec device floor &amp; Moodle-embedding review (adversarial)</h2>
+          <span class="reviewer-source">review-lowspec-embedding.md</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Lens: a 2 GB Android 8 phone with an outdated WebView, on metered data, inside a Moodle page — and a teacher on a short-lived token. Everything below is a field scenario, not a taste note. In the reviewer's words: the spines are unusually honest about the floor — tap-to-load everywhere, poster-as-first-class, no webfonts/no shadows, feature-detection-not-UA — and that discipline is real and checkable. But the spines modeled the floor device as a <em>featureless</em> browser tab, and the field device is a <em>hostile</em> one: it kills the tab, drops the POST, reloads the page, and lies about its speech voices. Three whole classes of behavior the floor makes routine — page reload mid-lesson, quiz submission on a dying connection, and the Moodle mobile app as the client — were either unspecified or specified only by a narrative sentence in a flow. The reviewer's closing note: C2, C3, H1, H2 share a root cause — the spines specified what surfaces look like in each state but were silent about state <em>survival</em> (across taps, retries, reloads, expiries); one pass adding durability rules would close most of the review. That pass is exactly what was applied same-day.</p>
+            <p>Counts: 3 critical · 4 high · 4 medium · 2 low. All applied in the same-day fix pass; four escalations carried as Open Items 11, 14, 16, 17.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">C1 — The Moodle mobile app is nowhere in either spine — and it is how many students will open the course</h3>
+              <span class="finding-location">EXPERIENCE § Moodle Embedding Contract; § Foundation; § IA</span>
+            </header>
+            <div class="finding-note">The embedding contract was written exclusively for a browser rendering the activity page; the app path was unspecified for both Student activity and Teacher launch ("what if there is no tab?"). Best case an unstyled hand-off violating the never-look-broken rule; worst case an app WebView where the Player half-works and no one designed the half.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — client-contexts rows added to the embedding contract with a designed, content-styled browser hand-off state ("This lesson opens in your browser.") for both Student and Teacher entry; app-native scope escalated as <strong>Open Item 14</strong>.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">C2 — Quiz submission on flaky connectivity: no double-submit protection, no durability rule — and the copy made a promise nothing guaranteed</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Quiz block; § State Patterns</span>
+            </header>
+            <div class="finding-note">A double-tap on a 2G-grade connection (the universal reflex) could burn a Teacher-limited attempt; a close during "Saving your score…" could lose the submission, violating A-13; "We'll keep saving your score" was only true if durability was a rule, and it wasn't.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Submit is single-fire, "Saving your score…" may only appear after durable acceptance, an attempt is consumed at most once per Submit; the durability mechanism escalated as <strong>Open Item 17</strong> (owner: Architect).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-critical">critical</span>
+              <h3 class="finding-title">C3 — Page reload is the floor device's default behavior, and the spine had no resume state at all; version pinning made reload silently swap the lesson</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Mid-lesson connectivity loss / Version pinning</span>
+            </header>
+            <div class="finding-note">Reload is the modal session shape on the floor, not an edge; a student on Block 7 of v1 could reload into v2 — different blocks, different quiz — with no version chrome and possibly an attempt consumed. The word "silently" was a designed-in confusion on exactly the devices that reload the most.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — "Player reloaded mid-lesson" experience-floor row added (viewed-marks and submitted-quiz states visibly restored or an honest designed state, never a silent restart); "silently" deleted and "Your lecturer updated this lesson" copy added; reload-does-not-end-session/consume-attempt tied into <strong>Open Item 11</strong>.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">H1 — "Work persisted" through token expiry was a narrative claim in Flow 1, not a rule anywhere</h3>
+              <span class="finding-location">EXPERIENCE § Key Flows → Flow 1; § Interaction Primitives; § State Patterns</span>
+            </header>
+            <div class="finding-note">Autosave requires a live token; a token dying at minute 40 of a 90-minute review meant every subsequent autosave failed with no defined state — Flow 1's "work persisted" was asserted by the story and guaranteed by nothing. Exactly the kind of claim that dies in implementation.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — behavioral rule in the Block editor pattern (no acknowledged edit ever lost to expiry; failed autosave surfaces immediately; editor content preserved locally and restored on relaunch into the same Draft) plus an autosave-failing state row; token lifetime and expiry mechanics escalated as <strong>Open Item 16</strong> (owner: Architect, FR-29 ADR).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">H2 — Sequential heavy blocks: no unload policy, no return-state rule — memory pressure was the one floor constraint the ladder ignored</h3>
+              <span class="finding-location">EXPERIENCE § Capability Tiers &amp; Degradation Ladder; § Component Patterns → Player shell / Model3D / Simulation</span>
+            </header>
+            <div class="finding-note">Two live heavy blocks is a tab crash on 1.5–2 GB RAM — which lands you in C3 with everything lost; and re-tapping a poster raised an unanswered data-honesty question about re-downloading 4.2 MB on metered data.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — ladder rule added: at most one heavy Block live at a time, leaving releases it back to poster state, cached re-load never re-charges the student's data (or the size label honestly reappears).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">H3 — Narration handled "no voices" but not voices that lie or voices that are wrong; the tier table had no runtime-failure row for it</h3>
+              <span class="finding-location">EXPERIENCE § Capability Tiers (Narration column); § Component Patterns → Narration control</span>
+            </header>
+            <div class="finding-note">Android 8 WebViews routinely report voices and then speak() silently does nothing — the control would render, the student would tap, and nothing would happen: worse than the spine's own banned unlabeled spinner. "Usable voices" was doing all the work and was never defined.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — narration runtime-failure rung mirroring the Simulation one (no audible start within a bounded time → quiet conversion to the Floor state), "usable" defined behaviorally, voice preference follows the Lesson Script language tag (en-NG → en-GB → any en) with "Show text" always one tap away.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">H4 — The Low-spec view simulated capability, not speed — the teacher's trust in the Review Gate was built on a fast laptop</h3>
+              <span class="finding-location">EXPERIENCE § Component Patterns → Preview overlay; § Capability Tiers; § Responsive &amp; Platform</span>
+            </header>
+            <div class="finding-note">"The Teacher sees what the Floor sees" was only half-true — the damage on real hardware is temporal, not visual — and the perceived-performance rules were directional but unmeasurable, with the PRD's CI low-spec profile (NFR-2) sitting right there as the measurement rig.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — honesty line added to the Preview overlay spec and UI copy ("what these devices see, not how fast they see it"); perceived-performance floors bound to the CI low-spec profile (first-text target, skeleton timing), CI-enforced like the bundle budget.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">M1 — Height self-management was asserted; layout shift was not addressed — the Next button was a moving target</h3>
+              <span class="finding-location">EXPERIENCE § Moodle Embedding Contract; § Component Patterns → Player shell</span>
+            </header>
+            <div class="finding-note">In-flow bottom nav jumped on every Back/Next; tap-to-load swapped a poster for a taller viewer seconds after the tap, when the thumb was already resting where Next used to be.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — two contract rules: the Player brings its own top edge into view on navigation; media containers reserve their space so loading never shifts text on screen.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">M2 — Tap-to-load was the data-honesty headline, but posters auto-loaded with no size discipline anywhere</h3>
+              <span class="finding-location">EXPERIENCE § Capability Tiers; DESIGN § Components → Poster fallback card; PRD FR-18</span>
+            </header>
+            <div class="finding-note">The poster path is the universal rendering path by the spine's own design — which made its weight the single biggest uncontrolled data cost in the Player.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — per-poster byte budget (value architecture-owned, CI-enforced) and lazy loading as posters' blocks approach, added to the ladder rules.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">M3 — Retake across Published Versions: "highest attempt" and "attempts remaining" had no student-visible story when the quiz changed</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Version pinning / Attempts exhausted; § Component Patterns → Quiz block</span>
+            </header>
+            <div class="finding-note">6/10 on v1, 7/8 on v2 — which is "highest"? The "highest across different denominators" question was nobody's.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Completion summary cross-version display rule (this attempt's score plus "Your best score so far"), attempts stated per-lesson; the scoring semantics forced into <strong>Open Item 11</strong> (owner: architecture + stakeholder).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">M4 — The Player had no motion policy — and the spine's own skeletons were the likeliest paint-cost violation</h3>
+              <span class="finding-location">EXPERIENCE § State Patterns → Cold load; § Interaction Primitives</span>
+            </header>
+            <div class="finding-note">Every implementer reaches for shimmer skeletons and tweened fills — each a per-frame paint cost on exactly the hardware the brand promises to respect, and nothing made it a violation.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Player motion budget: no continuous animations, static skeletons, progress fill steps not tweens, prefers-reduced-motion respected.</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">L1 — "Sits comfortably on any institutional theme" vs light-mode-only tokens</h3>
+              <span class="finding-location">DESIGN § Brand &amp; Style; EXPERIENCE § Moodle Embedding Contract</span>
+            </header>
+            <div class="finding-note">A hard-white card on a dark Moodle theme is a flashlight; the contract sentence overpromised what the light-only assumption delivers.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — Player root carries its own opaque background and hairline border (reads as a deliberate card, never a theme bug); contract claim softened; dark-theme audit noted post-MVP on the existing assumption (Open Item 4 covers light-mode-only).</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">L2 — Size labels and offline counters: two small honesty holes</h3>
+              <span class="finding-location">EXPERIENCE § Capability Tiers; § Component Patterns → Quiz block</span>
+            </header>
+            <div class="finding-note">"Size" must mean transfer (compressed) size — that is what metered data charges; and "attempts remaining always visible" needed a flaky-load fallback.</div>
+            <div class="finding-fix"><strong>Resolution:</strong> Fixed in spine — transfer size stated; counter fallback named (last-known value or "—", never a spinner in a counter).</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li><strong>Component parity:</strong> 24/24 names identical across DESIGN § Components and EXPERIENCE § Component Patterns at review time, same order (25/25 after the Completion summary fix). All four <code>sources:</code> paths resolve on disk; all cross-references and <code>{token}</code> paths resolve.</li>
+        <li><strong>Contrast verification:</strong> all five stated ratios recomputed and correct; unstated meaning-carrying pairs also pass (primary-deep/primary-wash ≈8.7:1, error/error-wash ≈5.7:1, progress fill vs track ≈5.3:1).</li>
+        <li><strong>Count variance:</strong> the accessibility review's own count line says 7 medium but enumerates eight medium findings (F-7–F-14); this report counts the enumerated findings, giving aggregate totals across the three review lenses of 4 critical · 10 high · 15 medium · 20 low.</li>
+        <li><strong>Reconciliation wave (context, ran before the adversarial wave):</strong> reconcile-prd.md (0c/0h/4m/9l), reconcile-product-brief.md (0c/0h/3m/9l), reconcile-project-context.md (0c/1h/1m/6l). All applied in the same-day pass — unknown-Block and major-version can't-play states (FR-2, the wave's one high), Rate Limit vs Quota states split (FR-21), poster provenance clarified (never AI raster imagery), whole-Lesson Regeneration path designed via prefilled Generate form (FR-7), device-budget phrasing handed to architecture, Next-gating relaxed to read-ahead-friendly, templated quota copy, Low-spec toggle recolored green — or escalated as <strong>Open Items 9</strong> (Block-Regeneration steering field, reduced to PRD-minimal meanwhile), <strong>10</strong> (mark-reviewed Structured Event vs the FR-27 canonical taxonomy, claim removed meanwhile), <strong>12</strong> (Curriculum Reference provenance), and <strong>13</strong> (College library tab naming/placement, the tab itself added to resolve course-scoping vs OQ-13 duplication).</li>
+        <li><strong>Open Items:</strong> the EXPERIENCE.md stakeholder batch now runs 1–17; items 9–17 are the escalations produced by the reconcile + review waves (steering field, mark-reviewed event, attempt unit incl. cross-version scoring, Curriculum Reference provenance, College library tab, Moodle app scope, schema text-alternative fields, token lifetime, quiz submission durability).</li>
+        <li><strong>Visual references:</strong> three key-screen mocks promoted to <code>mockups/</code> with composition-reference links under EXPERIENCE IA; spines-win-on-conflict stated.</li>
+        <li><strong>Status:</strong> both spines remain <code>status: draft</code> pending the batched stakeholder sign-off, per the run discipline. Post-fix contract sanity checks pass (component parity, FR-28 label verbatim, 9 [ASSUMPTION] tags intact, Open Items 1–17 intact, all token refs resolve).</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: _bmad-output/planning-artifacts/ux-designs/ux-2027_edon_sim_pro-2026-07-16/review-rubric.md</span>
+        <span>Generated: 2026-07-16T23:30:00+01:00 (reviews) / fixes applied same run</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

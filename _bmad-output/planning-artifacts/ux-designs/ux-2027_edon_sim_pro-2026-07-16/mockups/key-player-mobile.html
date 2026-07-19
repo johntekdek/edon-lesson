@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key screen — Student Player in Moodle (360px)</title>
+<style>
+/* ============================================================
+   KEY SCREEN MOCK — Student Player embedded in a Moodle page
+   Governing spine sections (spines win on conflict):
+   - DESIGN.md § Typography {typography.player-ui} — Player ships NO
+     webfonts; everything in the player area is the system stack
+   - DESIGN.md § Elevation & Depth — Player uses NO box-shadows at all
+     (this file contains zero box-shadow declarations)
+   - DESIGN.md § Layout & Spacing — Player fills its container, single
+     column, 16px internal padding on phones, no fixed pixel widths
+   - DESIGN.md § Components — Player shell (progress header + Back/Next
+     bar), Slide block, Narration control, Quiz block, Poster fallback card
+   - EXPERIENCE.md § Capability Tiers & Degradation Ladder — tap-to-load
+     poster path with size shown; Floor tier: annotations as text list;
+     poster fallback styled as content, never as an error
+   - EXPERIENCE.md § Moodle Embedding Contract — Player inherits page
+     scroll, no viewport-fixed chrome; Moodle chrome below is a grey
+     PLACEHOLDER for the institution's theme (not DESIGN tokens)
+   - EXPERIENCE.md § Component Patterns — Player shell, Slide, Narration
+     control (transcript as normal body text), Quiz (instant feedback,
+     attempts visible), Poster fallback card
+   - EXPERIENCE.md § Key Flows — Flow 2 (UJ-2) steps 1–5
+   - EXPERIENCE.md § Voice and Tone — all strings
+   ============================================================ */
+:root{
+  --primary:#006847; --primary-deep:#004D34; --primary-wash:#E7F2ED;
+  --on-primary:#FFFFFF; --ink:#191C1A; --ink-2:#565E5A;
+  --surface:#FFFFFF; --subtle:#F4F7F5; --border:#DCE5E0; --border-s:#AFBDB6;
+  --error:#BA1A1A; --error-wash:#FBEDEB;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#ECEFED;color:var(--ink);padding:32px;
+  font-family:system-ui,-apple-system,Roboto,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.5}
+.mockcap{font-size:12px;line-height:1.4;color:var(--ink-2);margin:0 0 10px}
+.row{display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start;margin-bottom:48px}
+.col{width:384px}
+
+/* phone frame (mock chrome, not product) */
+.phone{width:384px;background:#191C1A;border-radius:28px;padding:12px}
+.screen{width:360px;background:var(--surface);border-radius:18px;overflow:hidden}
+
+/* Moodle placeholder chrome — institution theme greys, NOT DESIGN tokens */
+.moodle-bar{display:flex;align-items:center;gap:10px;background:#F0F0F0;
+  border-bottom:1px solid #DDDDDD;padding:10px 14px;color:#444444;font-size:13px}
+.burger span{display:block;width:15px;height:2px;background:#666666;margin:3px 0}
+.moodle-crumb{padding:10px 14px 0;font-size:11px;color:#777777}
+.moodle-title{padding:4px 14px 12px;font-size:18px;font-weight:700;color:#333333;border-bottom:1px solid #EEEEEE}
+
+/* ---- Player shell (inherits page flow; no fixed chrome, no shadows) ---- */
+.player{background:var(--surface)}
+.progress{padding:12px 16px 0}
+.progress .count{font-size:12px;line-height:1.4;color:var(--ink-2)}
+.track{height:4px;background:var(--border);border-radius:9999px;margin-top:6px}
+.fill{height:4px;background:var(--primary);border-radius:9999px}
+.block{padding:16px}
+.nav{display:flex;gap:12px;padding:12px 16px;border-top:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;
+  border-radius:8px;font-size:15px;font-weight:600;font-family:inherit;border:none;cursor:pointer}
+.btn-back{background:transparent;color:var(--primary);padding:0 18px;font-weight:500}
+.btn-next{background:var(--primary);color:var(--on-primary);flex:1}
+.btn-secondary{background:var(--surface);color:var(--primary);border:1px solid var(--border-s);width:100%}
+.btn-submit{background:var(--primary);color:var(--on-primary);width:100%;margin-top:14px}
+
+/* Slide block + narration control */
+.slide h2{font-size:20px;font-weight:650;line-height:1.3;margin-bottom:12px}
+.narration{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.play{flex:none;width:44px;height:44px;border-radius:9999px;border:1px solid var(--border);
+  background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.dots{display:flex;gap:5px;flex:1}
+.dots span{width:6px;height:6px;border-radius:9999px;background:var(--border)}
+.dots .on{background:var(--primary)}
+.showtext{border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;
+  font-weight:500;font-family:inherit;cursor:pointer;background:var(--primary-wash);color:var(--primary-deep)}
+.formula{background:var(--subtle);border-radius:8px;padding:12px;text-align:center;
+  font-size:18px;font-weight:650;margin-bottom:14px}
+.slide p{font-size:17px;line-height:1.55;margin-bottom:12px}
+
+/* Poster fallback card — designed content state, never an error */
+.poster-card{background:var(--subtle);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.poster-card svg.poster{display:block;width:100%;height:auto}
+.poster-cap{padding:12px 14px}
+.poster-cap .t{font-size:14px;font-weight:600;line-height:1.45}
+.poster-cap .d{font-size:12px;line-height:1.4;color:var(--ink-2);margin-top:3px}
+.poster-cap .btn-secondary{margin-top:12px}
+.annos{border-top:1px solid var(--border);padding:12px 14px;display:grid;gap:9px}
+.anno{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4}
+.anno .n{flex:none;width:20px;height:20px;border-radius:9999px;background:var(--primary);
+  color:var(--on-primary);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* Quiz block */
+.quiz .q{font-size:16px;font-weight:600;line-height:1.5;margin:4px 0 10px}
+.opt{display:flex;align-items:center;gap:10px;min-height:48px;padding:12px 14px;
+  border:1px solid var(--border);border-radius:8px;font-size:16px;margin-bottom:8px}
+.opt svg{flex:none;margin-left:auto}
+.opt-correct{background:var(--primary-wash);color:var(--primary-deep)}
+.opt-incorrect{background:var(--error-wash);color:var(--error)}
+.opt-answer{border:2px solid var(--primary)}
+.fb{font-size:14px;line-height:1.45;margin:2px 0 18px}
+.fb-good{color:var(--primary-deep)}
+.fb-bad{color:var(--error)}
+.attempts{font-size:12px;line-height:1.4;color:var(--ink-2);margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="row">
+  <!-- ============ (a) CANONICAL — Slide with narration, transcript open ============ -->
+  <div class="col">
+    <p class="mockcap">(a) Canonical state — Slide Block with narration control, transcript open (&ldquo;Show text&rdquo; active). Player mounted in the Moodle activity page, system fonts only, no shadows.</p>
+    <div class="phone"><div class="screen">
+      <div class="moodle-bar"><span class="burger"><span></span><span></span><span></span></span>PHY 201 — Basic Electricity · Moodle</div>
+      <div class="moodle-crumb">My courses / PHY 201 / Lesson</div>
+      <div class="moodle-title">Ohm&rsquo;s Law and simple circuits</div>
+
+      <div class="player">
+        <div class="progress">
+          <span class="count">Block 4 of 9</span>
+          <div class="track"><div class="fill" style="width:44%"></div></div>
+        </div>
+        <div class="block slide">
+          <h2>Calculating current with V&nbsp;=&nbsp;IR</h2>
+          <div class="narration">
+            <button class="play" aria-label="Play narration">
+              <svg width="16" height="16" viewBox="0 0 16 16"><path d="M4.5 2.8v10.4L13 8z" fill="#006847"/></svg>
+            </button>
+            <span class="dots"><span class="on"></span><span class="on"></span><span></span><span></span><span></span></span>
+            <button class="showtext">Show text</button>
+          </div>
+          <div class="formula">I&nbsp;=&nbsp;V&nbsp;÷&nbsp;R</div>
+          <p>Ohm&rsquo;s Law links three quantities: voltage, current and resistance. When a 12&nbsp;volt battery drives a 4&nbsp;ohm resistor, the current is 12 divided by 4 — three amperes.</p>
+          <p>Whenever you know two of the three, you can find the third.</p>
+        </div>
+        <div class="nav">
+          <button class="btn btn-back">Back</button>
+          <button class="btn btn-next">Next</button>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ============ (b) FLOOR TIER — poster fallback + quiz feedback ============ -->
+  <div class="col">
+    <p class="mockcap">(b1) Floor tier — Model3D Poster fallback card: tap-to-load with size shown, annotations as a text list. Styled as content, never as an error.</p>
+    <div class="phone"><div class="screen">
+      <div class="moodle-bar"><span class="burger"><span></span><span></span><span></span></span>PHY 201 — Basic Electricity · Moodle</div>
+
+      <div class="player">
+        <div class="progress">
+          <span class="count">Block 6 of 9</span>
+          <div class="track"><div class="fill" style="width:67%"></div></div>
+        </div>
+        <div class="block">
+          <div class="poster-card">
+            <!-- Poster: pre-rendered view derived from the curated glTF asset (never AI raster imagery) -->
+            <svg class="poster" viewBox="0 0 328 150" role="img" aria-label="Cutaway view of a carbon-film resistor">
+              <rect width="328" height="150" fill="#F4F7F5"/>
+              <line x1="18" y1="75" x2="86" y2="75" stroke="#565E5A" stroke-width="4" stroke-linecap="round"/>
+              <line x1="242" y1="75" x2="310" y2="75" stroke="#565E5A" stroke-width="4" stroke-linecap="round"/>
+              <rect x="84" y="47" width="160" height="56" rx="24" fill="#E8C9A0" stroke="#565E5A" stroke-width="1.5"/>
+              <rect x="112" y="47" width="10" height="56" fill="#8C5A2B"/>
+              <rect x="134" y="47" width="10" height="56" fill="#191C1A"/>
+              <rect x="156" y="47" width="10" height="56" fill="#B3541E"/>
+              <rect x="196" y="47" width="10" height="56" fill="#C8A24B"/>
+              <path d="M214 47h30a24 24 0 0 1 0 56h-30z" fill="#FFFFFF" stroke="#565E5A" stroke-width="1.5"/>
+              <rect x="216" y="66" width="26" height="18" rx="9" fill="#D7DEDA" stroke="#565E5A" stroke-width="1.2"/>
+              <rect x="216" y="62" width="26" height="4" fill="#3A3F3C"/>
+              <circle cx="88" cy="75" r="8" fill="#C9CFCB" stroke="#565E5A" stroke-width="1.2"/>
+            </svg>
+            <div class="poster-cap">
+              <p class="t">Inside a carbon-film resistor</p>
+              <p class="d">Cutaway model showing the layers that set a resistor&rsquo;s value.</p>
+              <button class="btn btn-secondary">Load 3D model (4.2 MB)</button>
+            </div>
+            <div class="annos">
+              <div class="anno"><span class="n">1</span><span>Ceramic core — the solid support inside the resistor.</span></div>
+              <div class="anno"><span class="n">2</span><span>Carbon film — the layer that resists the current.</span></div>
+              <div class="anno"><span class="n">3</span><span>Metal end cap — connects the film to the lead wire.</span></div>
+              <div class="anno"><span class="n">4</span><span>Colour bands — show the resistance value.</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="nav">
+          <button class="btn btn-back">Back</button>
+          <button class="btn btn-next">Next</button>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="col">
+    <p class="mockcap">(b2) Floor tier — Quiz Block with instant per-question feedback: one correct, one incorrect with the correct answer outlined. Color always paired with glyph and text.</p>
+    <div class="phone"><div class="screen">
+      <div class="moodle-bar"><span class="burger"><span></span><span></span><span></span></span>PHY 201 — Basic Electricity · Moodle</div>
+
+      <div class="player">
+        <div class="progress">
+          <span class="count">Block 7 of 9</span>
+          <div class="track"><div class="fill" style="width:78%"></div></div>
+        </div>
+        <div class="block quiz">
+          <p class="q">1. A 12&nbsp;V battery is connected across a 4&nbsp;Ω resistor. What current flows through the circuit?</p>
+          <div class="opt opt-correct">3 A
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-label="Correct"><path d="M3 8.5l3.2 3.2L13 5" fill="none" stroke="#004D34" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="opt">0.33 A</div>
+          <div class="opt">48 A</div>
+          <p class="fb fb-good">Correct. I&nbsp;=&nbsp;V&nbsp;÷&nbsp;R&nbsp;=&nbsp;12&nbsp;÷&nbsp;4&nbsp;=&nbsp;3&nbsp;A.</p>
+
+          <p class="q">2. The voltage stays the same and the resistance doubles. What happens to the current?</p>
+          <div class="opt opt-incorrect">It doubles
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-label="Incorrect"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="#BA1A1A" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="opt opt-answer">It halves</div>
+          <div class="opt">It stays the same</div>
+          <p class="fb fb-bad">Not quite. With the same voltage, doubling the resistance halves the current.</p>
+
+          <button class="btn btn-submit">Submit answers</button>
+          <p class="attempts">Attempt 1 of 2 — your highest score counts.</p>
+        </div>
+        <div class="nav">
+          <button class="btn btn-back">Back</button>
+          <button class="btn btn-next">Next</button>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+</body>
+</html>

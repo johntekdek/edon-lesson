@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key screen — Diagram chat message (block_edon_ai)</title>
+<style>
+/* ============================================================
+   KEY SCREEN MOCK — Diagram message in the block_edon_ai chat
+   Governing spine sections (spines win on conflict):
+   - DESIGN.md § Components — AI content label ({components.ai-content-label},
+     gold wash + accent-ink, pinned to the diagram card, never removable),
+     Diagram chat message (sanitised SVG on white card {rounded.md},
+     caption row with quiet-destructive "Report this diagram")
+   - DESIGN.md § Colors — gold reserved for AI-awaiting-judgment; gold is
+     always a wash/fill paired with accent-ink text, never text on white
+   - DESIGN.md § Layout & Spacing — diagram card fills the message width;
+     chat column chrome is the EXISTING block_edon_ai chrome (grey
+     placeholder here, not DESIGN tokens)
+   - EXPERIENCE.md § Component Patterns — Diagram chat message, AI content
+     label (verbatim FR-28 string)
+   - EXPERIENCE.md § State Patterns — "Daily diagram Quota reached"
+     chat reply ({n}=20 platform default, OQ-2; interpolated from Tenant
+     config, never hardcoded in product)
+   - EXPERIENCE.md § Voice and Tone — label + quota strings verbatim
+   - EXPERIENCE.md § Key Flows — Flow 3 (UJ-3)
+   ============================================================ */
+:root{
+  --primary:#006847; --accent-wash:#FFF3D6; --accent-ink:#402D00;
+  --ink:#191C1A; --ink-2:#565E5A; --surface:#FFFFFF; --subtle:#F4F7F5;
+  --border:#DCE5E0; --error:#BA1A1A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#ECEFED;color:var(--ink);padding:32px;
+  font-family:system-ui,-apple-system,Roboto,'Segoe UI',sans-serif;
+  font-size:16px;line-height:1.5}
+.mockcap{font-size:12px;line-height:1.4;color:var(--ink-2);max-width:384px;margin:0 0 10px}
+
+/* chat column frame — existing block_edon_ai chrome, grey placeholder */
+.chat{width:384px;background:#FAFAFA;border:1px solid #CFCFCF;border-radius:16px;overflow:hidden}
+.chat-bar{background:#F0F0F0;border-bottom:1px solid #DDDDDD;padding:10px 14px;
+  color:#444444;font-size:13px}
+.msgs{padding:14px 12px;display:grid;gap:12px}
+.day{justify-self:center;font-size:11px;color:#888888}
+.u-msg{justify-self:end;max-width:85%;background:#E6E6E6;color:#222222;
+  border-radius:12px;padding:9px 13px;font-size:15px;line-height:1.45}
+.a-msg{justify-self:start;max-width:100%;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:10px 13px;
+  font-size:15px;line-height:1.45}
+
+/* Diagram chat message — the spec'd component */
+.diagram-msg{justify-self:start;width:100%;background:var(--surface);
+  border:1px solid var(--border);border-radius:12px;padding:10px}
+.ai-label{display:inline-block;background:var(--accent-wash);color:var(--accent-ink);
+  border-radius:4px;padding:4px 8px;font-size:12px;line-height:1.4;margin-bottom:8px}
+.svg-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.svg-card svg{display:block;width:100%;height:auto}
+.cap-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.cap{font-size:12px;line-height:1.4;color:var(--ink-2)}
+.report{background:none;border:none;padding:4px;font-family:inherit;cursor:pointer;
+  font-size:12px;line-height:1.4;color:var(--error)}
+</style>
+</head>
+<body>
+
+<p class="mockcap">Diagram chat message in the existing block_edon_ai chat (chat chrome untouched — grey placeholder). First exchange: rendered labelled-SVG diagram card. Second: the daily-Quota-reached chat reply.</p>
+
+<div class="chat">
+  <div class="chat-bar">e-DON AI chat · Moodle</div>
+  <div class="msgs">
+    <span class="day">Today</span>
+
+    <div class="u-msg">Draw a labelled diagram of a simple series circuit</div>
+
+    <!-- Diagram chat message: AI content label + sanitised SVG + caption row -->
+    <div class="diagram-msg">
+      <span class="ai-label">AI-generated — verify against your course materials</span>
+      <div class="svg-card">
+        <svg viewBox="0 0 340 250" role="img" aria-label="AI-generated diagram: a simple series circuit with battery, switch, resistor and ammeter">
+          <rect width="340" height="250" fill="#FFFFFF"/>
+          <!-- wires -->
+          <path d="M60 50h70M200 50h80M290 50v45M290 145v55M290 200H186M154 200H60M60 200v-90M60 90V50"
+                fill="none" stroke="#191C1A" stroke-width="2"/>
+          <!-- switch (open) top -->
+          <circle cx="132" cy="50" r="3.5" fill="#FFFFFF" stroke="#191C1A" stroke-width="2"/>
+          <circle cx="198" cy="50" r="3.5" fill="#FFFFFF" stroke="#191C1A" stroke-width="2"/>
+          <line x1="135" y1="49" x2="193" y2="30" stroke="#191C1A" stroke-width="2" stroke-linecap="round"/>
+          <!-- resistor zigzag, right side -->
+          <path d="M290 95l-9 7 18 8-18 8 18 8-18 8 9 7" fill="none" stroke="#191C1A" stroke-width="2" stroke-linejoin="round"/>
+          <!-- ammeter, bottom -->
+          <circle cx="170" cy="200" r="16" fill="#FFFFFF" stroke="#191C1A" stroke-width="2"/>
+          <text x="170" y="206" text-anchor="middle" font-size="14" font-weight="600" fill="#191C1A" font-family="inherit">A</text>
+          <!-- battery, left side -->
+          <line x1="44" y1="90" x2="76" y2="90" stroke="#191C1A" stroke-width="2.5"/>
+          <line x1="52" y1="110" x2="68" y2="110" stroke="#191C1A" stroke-width="2"/>
+          <text x="82" y="86" font-size="11" fill="#191C1A" font-family="inherit">+</text>
+          <!-- labels with leader lines -->
+          <text x="166" y="86" text-anchor="middle" font-size="12" fill="#191C1A" font-family="inherit">Switch</text>
+          <line x1="166" y1="70" x2="164" y2="42" stroke="#565E5A" stroke-width="1"/>
+          <text x="118" y="104" font-size="12" fill="#191C1A" font-family="inherit">Battery (12 V)</text>
+          <line x1="114" y1="100" x2="80" y2="98" stroke="#565E5A" stroke-width="1"/>
+          <text x="252" y="124" text-anchor="end" font-size="12" fill="#191C1A" font-family="inherit">Resistor (4 Ω)</text>
+          <line x1="256" y1="120" x2="278" y2="120" stroke="#565E5A" stroke-width="1"/>
+          <text x="170" y="168" text-anchor="middle" font-size="12" fill="#191C1A" font-family="inherit">Ammeter</text>
+          <line x1="170" y1="172" x2="170" y2="182" stroke="#565E5A" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="cap-row">
+        <span class="cap">Simple series circuit</span>
+        <button class="report">Report this diagram</button>
+      </div>
+    </div>
+
+    <div class="u-msg">One more — a parallel circuit with two resistors</div>
+
+    <!-- Daily Quota reached: rendered as a plain chat reply, never a technical error -->
+    <div class="a-msg">You&rsquo;ve used today&rsquo;s 20 diagram requests. More available tomorrow.</div>
+
+  </div>
+</div>
+
+</body>
+</html>
