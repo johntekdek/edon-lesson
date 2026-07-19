@@ -69,3 +69,34 @@ Two economic/quality invariants shape every implementation decision:
 - ADRs live in `/docs/adr` and are numbered; ADR-001 backend framework, ADR-002 launch model selection benchmark are reserved.
 - Conventional commits; feature branches; no direct pushes to main once CI exists.
 - External integration contracts (edon-rag retrieval API, Moodle plugin API) are documented in `/docs/integrations` and treated as versioned interfaces — changes to what we *need* from them become explicit work items, never assumed edits to external systems.
+
+## 9. Architecture Decisions (extension, 2026-07-17)
+
+> Appended by the Architect at the end of Architecture Creation, per the status line above. Additive only; no rule above is weakened. **Pending stakeholder sign-off of the architecture run 2026-07-17** — treat as binding once signed off. Rationale lives in `/docs/adr` and the architecture spine (`_bmad-output/planning-artifacts/architecture/architecture-2027_edon_sim_pro-2026-07-17/ARCHITECTURE-SPINE.md`), which downstream workflows consume alongside this file.
+
+**ADR index (decisions of record):**
+- **ADR-001 — FastAPI** (0.139.x, uvicorn, Pydantic v2) for the single backend deployable + workers; Flask remains the team default outside this repo.
+- **ADR-002 — Model selection is a standing benchmark**, run through the production adapter with zero code changes per candidate; winners are dated ADR-002 addenda and land in per-workload config only. Current open-weight migration exemplar: Qwen3.6-35B-A3B (Apache-2.0, INT4 on 24 GB, vLLM guided decoding) — supersedes "Qwen3-32B-class" as the class example in §3's migration note (same intent, current model).
+- **ADR-003 — Procrastinate 3.x on the platform PostgreSQL** (no Redis/RabbitMQ). Rule: any job whose loss violates a requirement is enqueued in the same transaction as the domain write it serves.
+- **ADR-004 — Storage/versioning:** Lesson Scripts as validated JSONB; `published_versions` immutable at the database (no UPDATE/DELETE grants); one mutable Draft per Lesson with optimistic `revision`.
+- **ADR-005 — Pipeline as config:** stages/prompts/retrieval params in versioned `pipeline.yaml` + prompt files; ungrounded generation fails (never an uncited Draft); per-Block `job_progress` events power authoring progress.
+- **ADR-006 — Player:** self-contained IIFE (`EdonPlayer.mount`), ES2017/`chrome61` floor, React 19.2, all size/perf budgets in one CI-enforced `budgets.json` (core ≤ 150 kB gzip; heavy renderers and Showcase polish are lazy chunks).
+- **ADR-007 — Simulation:** `sandbox="allow-scripts"` + CSP `default-src 'none'` + versioned postMessage protocol; dual mode `template|freecode` in the schema; headless pre-publish checks (incl. keyboard operability) gate publish.
+- **ADR-008 — Tenant isolation mechanics:** `TenantContext` required for all data access + PostgreSQL RLS on every tenant-owned table (migration CI gate); operator access only via the audited operator router.
+- **ADR-009 — Credentials (exactly five kinds):** tenant API keys (dual-valid, hashed), Launch Tokens (HS256, 120 s, single-use), Authoring Sessions (8 h), Playback tokens (24 h), Operator keys (CLI-issued, `/operator/*` only, audited). All lifetimes are config.
+- **ADR-010 — Attempts:** an attempt = one Lesson run pinned to one Published Version, consumed at first quiz submission; scores stored as fractions (cross-version "highest attempt" = max fraction); submissions idempotent by client UUID, persisted + outboxed in one transaction before ack; grades/completions delivered via **pull-and-ack outbox** drained by the Moodle plugin's scheduled task.
+- **ADR-011 — Data protection:** the LLM adapter's request types carry no identity fields; telemetry uses per-tenant HMAC pseudonyms; retention via `retention.yaml` (default 12 months); processor record in `/docs/processors.md`.
+- **ADR-012 — Object storage:** `StorageDriver` port; launch driver = VPS filesystem + nginx `X-Accel-Redirect`; S3-compatible driver is the swap; MinIO excluded (AGPL). Publishing freezes assets into the immutable version prefix with a manifest.
+- **ADR-013 — Governance:** quotas/rate limits/budgets are policies over one `action_type` vocabulary, enforced reserve→settle in the adapter call path; cache hits never charge; OQ-9 exhaustion semantics verbatim; default per-tenant generation concurrency 1 (keeps the budget overrun bound at one job, A-29).
+- **ADR-014 — Player composition interfaces:** `BlockRegistry`, `LessonDeliverySource`, `NarrationProvider`, `ResultsSink` — each with exactly one MVP implementation, exercised on every play; these interfaces are the V3 seams (a)(b)(c)(e) in code form.
+
+**Build rules added (bind all stories):**
+- `core` imports no framework, queue, or vendor SDK; routers/tasks stay thin (import-linter CI contract).
+- **No-TypeScript is CI-enforced:** a lint gate fails any `.ts`/`.tsx` file in `/player`, `/authoring`, `/schema/js` (makes §2's [HARD] rule mechanical). Python dependencies are managed with `uv` (lockfile committed), resolving §2's "pip with a lockfile or uv" either/or.
+- **Licence-audit CI gate:** both lockfiles are checked against the §5 allowlist (MIT/BSD/Apache-2.0/PSF/OFL or compatible); a non-allowlisted direct or transitive dependency fails CI. (@gltf-transform 4.4.x verified MIT at the pinned version; the gate re-verifies on every upgrade — ADR-012.)
+- **One test/lint toolchain:** pytest + ruff (backend), Vitest + ESLint + Prettier (JS), Playwright (E2E + CI low-spec profile) — per-story tool choices are not open.
+- Every new tenant-owned table ships its RLS policy in the same Alembic migration — CI fails otherwise.
+- The FR-27 event taxonomy is closed: PRD list + `diagram_review_completed`, `diagram_invalidated`, `operator_action`, `cost_alert`, `writeback_overdue`. New event types require an architecture/PRD note.
+- The SVG sanitiser allowlist preserves `<title>`, `<desc>`, `role="img"`, `aria-label`, `aria-labelledby`; Lesson Script Schema v1.0 carries `altText`/`longDescription` for Diagram Blocks and Model3D/Simulation posters.
+- Policy numbers (quotas, budgets, lifetimes, size budgets) are config, never code constants; `budgets.json` is the single budget source consumed by CI and validators.
+- Platform API stays LMS-agnostic (Moodle knowledge only in `mod_edonlesson`); integration contracts live in `/docs/integrations` and change only via work items.

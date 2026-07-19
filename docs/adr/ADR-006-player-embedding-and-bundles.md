@@ -1,0 +1,21 @@
+# ADR-006: Player Embedding and Bundle Strategy
+
+**Status:** Proposed (pending stakeholder sign-off, architecture run 2026-07-17)
+
+## Context
+FR-13–FR-18, NFR-2, OQ-16 device floor, UX Capability Tiers + Moodle Embedding Contract + Showcase amendment; project-context §2: self-contained embeddable bundle (script + mount API), no Next.js host, no TypeScript.
+
+## Decision
+- **One bundle, one global:** Vite 8 lib-mode IIFE exposing `window.EdonPlayer.mount(element, {scriptUrl, token, locale})` / `unmount()` — the canonical mount signature (AD-22); everything else (resume state, flags, governance state, tier hints, attempt ids) arrives via the Player's own `GET /api/v1/playback/bootstrap` call, never via page-embedded data. Advanced overrides (`source`, `sink`, `narration` — ADR-014) are optional and default to platform implementations. Syntax target ES2017 (`build.target: 'chrome61'`, `cssTarget: 'chrome61'`) — verified floor for never-updated Android 8 WebView-shell browsers. Styles are injected, namespaced (`.edon-p-*`), scoped to the mount container; no global resets (Embedding Contract).
+- **Runtime:** React 19.2 (constitution §2 default; the Preact swap is a recorded stakeholder option). No runtime schema validation; the script arrives server-validated.
+- **Chunking:** core (shell + slide/narration/quiz/diagram renderers + registry/delivery/narration interfaces) ≤ **150 kB gzip, CI hard fail**; lazy chunks fetched from the platform origin relative to the bundle URL: `model3d` (tree-shaken Three.js r185 + DRACOLoader + wasm decoder) ≤ 220 kB gzip, `simulation` runtime ≤ 60 kB, `showcase` enhancement (Inter + Plus Jakarta Sans subsets + motion) ≤ 300 kB, loaded post-first-paint only on the Showcase tier, never render-blocking.
+- **Tier detection** (UX-approved, demote-when-unsure): Showcase requires all of WebGL, `deviceMemory ≥ 4`, `hardwareConcurrency ≥ 4`, `effectiveType === '4g'`, `saveData === false`; any missing/undefined signal demotes to Full. Feature detection only — never user-agent. Tap-to-load below Showcase with transfer size labels; at most one heavy Block live at a time; leaving a heavy Block releases it (HTTP cache makes re-load free — size label reappears only if genuinely evicted). **Constrained predicate** (the UX ladder's "asset too heavy for the detected device class"): low device class = `deviceMemory ≤ 2` or undefined → per-asset load ceiling halves (glTF > 2.5 MB renders poster-only); any heavy-asset load failure or readiness timeout routes that Block to Constrained behavior on any tier.
+- **Asset budgets** (in repo-root `budgets.json`, all values bytes, CI + pipeline enforced): Model3D glTF ≤ 5 MB transfer hard cap (≤ 3 MB preferred at selection time), Draco-compressed via @gltf-transform (MIT at pinned 4.4.x) at library-ingest time; posters ≤ 60 kB, lazy near-viewport; diagram SVG ≤ 150 kB.
+- **Old-engine floor is actively enforced**: targeted built-in polyfills ship inside the core budget (`globalThis`, `queueMicrotask`, `Promise.finally`, plus whatever the browserslist compat-lint flags — transpilation does not supply built-ins), no `import.meta.url` in IIFE output (base URL captured from `document.currentScript`), and one real old-engine smoke test is a pre-launch hardening work item (the throttled CI profile runs modern Chromium and cannot catch missing built-ins).
+- **Perceived-performance floor** (UX Performance-as-UX row): lesson title + first Slide text ≤ 5 s on the CI low-spec profile — Playwright 1.61 + CDP `Emulation.setCPUThrottlingRate(6)` + 400 kbps/400 ms RTT network shaping + a memory-capped browser container (~1.5 GB cgroup limit, covering project-context §7's "constrained memory") — run in CI for every player-affecting change.
+- **Preview parity (FR-9):** the Authoring Preview overlay loads this same bundle and mounts it against the current Draft with a `mode: 'preview'` flag (adds device-width frame + Low-spec toggle that forces the Floor tier); no separate preview renderer exists.
+
+## Consequences
+- The Moodle plugin's embed is three lines (div + script + mount) — thin by construction (WI-MOD-1).
+- SCORM/offline export (V3 seam e) reuses the same IIFE against a `file://`-safe `CompleteScriptSource`.
+- The budgets file is the single tuning point; changing a budget is config + CI, not archaeology.
