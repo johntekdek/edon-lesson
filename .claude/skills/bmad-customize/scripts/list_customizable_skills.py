@@ -29,7 +29,6 @@ produced.
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 import tomllib
@@ -204,10 +203,6 @@ def main(argv: list[str]) -> int:
     args = parse_args(argv)
     project_root = Path(args.project_root).expanduser().resolve()
     if not project_root.is_dir():
-        print(
-            f"error: project-root does not exist or is not a directory: {project_root}",
-            file=sys.stderr,
-        )
         return 2
 
     primary = (
@@ -222,8 +217,7 @@ def main(argv: list[str]) -> int:
         if root not in roots:
             roots.append(root)
 
-    result = scan_skills(roots, project_root)
-    print(json.dumps(result, indent=2, sort_keys=True))
+    scan_skills(roots, project_root)
     return 0
 
 

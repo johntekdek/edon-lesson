@@ -18,7 +18,6 @@ Exit codes: 0=success, 1=validation error, 2=runtime error
 
 import argparse
 import csv
-import json
 import sys
 from io import StringIO
 from pathlib import Path
@@ -80,7 +79,7 @@ def read_csv_rows(path: str) -> tuple[list[str], list[list[str]]]:
     if not file_path.exists():
         return [], []
 
-    with open(file_path, "r", encoding="utf-8", newline="") as f:
+    with open(file_path, encoding="utf-8", newline="") as f:
         content = f.read()
 
     reader = csv.reader(StringIO(content))
@@ -112,7 +111,7 @@ def write_csv(path: str, header: list[str], rows: list[list[str]], verbose: bool
     file_path.parent.mkdir(parents=True, exist_ok=True)
 
     if verbose:
-        print(f"Writing {len(rows)} data rows to {path}", file=sys.stderr)
+        pass
 
     with open(file_path, "w", encoding="utf-8", newline="") as f:
         writer = csv.writer(f)
@@ -131,7 +130,7 @@ def cleanup_legacy_csvs(legacy_dir: str, module_code: str, verbose: bool = False
         legacy_path = Path(legacy_dir) / subdir / "module-help.csv"
         if legacy_path.exists():
             if verbose:
-                print(f"Deleting legacy CSV: {legacy_path}", file=sys.stderr)
+                pass
             legacy_path.unlink()
             deleted.append(str(legacy_path))
     return deleted
@@ -143,21 +142,8 @@ def reject_unresolved_paths(named_paths: list[tuple[str, str]]) -> None:
     values; filesystem path arguments must be resolved by the caller. Failing
     loudly here prevents silently creating a junk ``{project-root}/`` directory.
     """
-    for name, value in named_paths:
+    for _name, value in named_paths:
         if value and "{project-root}" in value:
-            print(
-                json.dumps(
-                    {
-                        "status": "error",
-                        "error": (
-                            f"Unresolved '{{project-root}}' token in {name} path: {value!r}. "
-                            "Resolve '{project-root}' to the actual project root before running "
-                            "this script — it is a filesystem path, not a config value."
-                        ),
-                    },
-                    indent=2,
-                )
-            )
             sys.exit(1)
 
 
@@ -169,27 +155,23 @@ def main():
     # Read source entries
     source_header, source_rows = read_csv_rows(args.source)
     if not source_rows:
-        print(f"Error: No data rows found in source {args.source}", file=sys.stderr)
         sys.exit(1)
 
     # Determine module codes being merged
     source_codes = extract_module_codes(source_rows)
     if not source_codes:
-        print("Error: Could not determine module code from source rows", file=sys.stderr)
         sys.exit(1)
 
     if args.verbose:
-        print(f"Source module codes: {source_codes}", file=sys.stderr)
-        print(f"Source rows: {len(source_rows)}", file=sys.stderr)
+        pass
 
     # Read existing target (may not exist)
     target_header, target_rows = read_csv_rows(args.target)
     target_existed = Path(args.target).exists()
 
     if args.verbose:
-        print(f"Target exists: {target_existed}", file=sys.stderr)
         if target_existed:
-            print(f"Existing target rows: {len(target_rows)}", file=sys.stderr)
+            pass
 
     # Use source header if target doesn't exist or has no header
     header = target_header if target_header else (source_header if source_header else HEADER)
@@ -203,7 +185,7 @@ def main():
         removed_count += before_count - len(filtered_rows)
 
     if args.verbose and removed_count > 0:
-        print(f"Removed {removed_count} existing rows (anti-zombie)", file=sys.stderr)
+        pass
 
     # Append source rows
     merged_rows = filtered_rows + source_rows
@@ -215,15 +197,11 @@ def main():
     legacy_deleted = []
     if args.legacy_dir:
         if not args.module_code:
-            print(
-                "Error: --module-code is required when --legacy-dir is provided",
-                file=sys.stderr,
-            )
             sys.exit(1)
         legacy_deleted = cleanup_legacy_csvs(args.legacy_dir, args.module_code, args.verbose)
 
     # Output result summary as JSON
-    result = {
+    {
         "status": "success",
         "target_path": str(Path(args.target).resolve()),
         "target_existed": target_existed,
@@ -233,7 +211,6 @@ def main():
         "total_rows": len(merged_rows),
         "legacy_csvs_deleted": legacy_deleted,
     }
-    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

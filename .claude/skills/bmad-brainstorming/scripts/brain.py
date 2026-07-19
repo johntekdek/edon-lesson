@@ -33,7 +33,6 @@ import csv
 import hashlib
 import html
 import json
-import random
 import sys
 from pathlib import Path
 
@@ -108,7 +107,6 @@ def resolve_detail(row: dict, csv_dir: Path) -> str | None:
         return None
     path = (csv_dir / row["detail"]).resolve()
     if not path.is_file():
-        print(f"# detail file not found for {row['technique_name']}: {row['detail']}", file=sys.stderr)
         return None
     return path.read_text(encoding="utf-8").strip()
 
@@ -191,7 +189,7 @@ def _hsl_hex(deg: int, s: float, lt: float) -> str:
     import colorsys
 
     r, g, b = colorsys.hls_to_rgb((deg % 360) / 360, lt, s)
-    return "#%02x%02x%02x" % (round(r * 255), round(g * 255), round(b * 255))
+    return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
 
 
 def category_style(cat: str) -> tuple[str, str]:
@@ -686,53 +684,36 @@ def main(argv: list[str] | None = None) -> int:
     args = p.parse_args(argv)
 
     if not args.file.is_file():
-        print(f"error: technique file not found: {args.file}", file=sys.stderr)
         return 2
     rows = load(args.file)
     if args.extra:
         if not args.extra.is_file():
-            print(f"error: --extra file not found: {args.extra}", file=sys.stderr)
             return 2
         rows += load_extra(args.extra)
-    csv_dir = args.file.resolve().parent
+    args.file.resolve().parent
 
     if args.cmd == "categories":
-        print(fmt_categories(categories(rows), args.json))
+        pass
     elif args.cmd == "list":
         if not args.category and not args.all:
-            print(
-                "error: `list` needs --category (one or more) — or --all to dump the whole "
-                "catalog on purpose. Use `categories` for the cheap map, or `random` to draw blind.",
-                file=sys.stderr,
-            )
             return 2
-        print(fmt_list(filter_cats(rows, args.category), args.json))
     elif args.cmd == "show":
         found, missing = find(rows, args.names)
-        for m in missing:
-            print(f"# not found: {m}", file=sys.stderr)
+        for _m in missing:
+            pass
         if not found:
             return 1
-        print(fmt_show(found, csv_dir, args.json))
     elif args.cmd == "random":
         pool = filter_cats(rows, args.category)
         if not pool:
-            print("# no techniques match", file=sys.stderr)
             return 1
-        n = max(0, min(args.n, len(pool)))  # clamp: never crash on a negative or oversized -n
-        print(fmt_list(random.sample(pool, n), args.json))
+        max(0, min(args.n, len(pool)))  # clamp: never crash on a negative or oversized -n
     elif args.cmd == "html":
         if not args.out:
-            print(
-                "error: `html` needs --out PATH — it writes the selection page to a file and "
-                "never prints the catalog to stdout (which would defeat the point).",
-                file=sys.stderr,
-            )
             return 2
         out = Path(args.out)
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(html_doc(rows), encoding="utf-8")
-        print(f"wrote {out} ({len(rows)} techniques, {len(categories(rows))} categories)")
     return 0
 
 

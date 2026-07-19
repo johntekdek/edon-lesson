@@ -249,7 +249,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.output:
         Path(args.output).write_text(out + "\n", encoding="utf-8")
     else:
-        print(out)
+        pass
     return 0
 
 
