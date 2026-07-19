@@ -1,0 +1,178 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a01",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "The Periodic Table and Chemical Bonding",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "The Modern Periodic Table",
+      "citations": [
+        {
+          "sourceChunkId": "8",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 6",
+          "excerpt": "The modern periodic table is organized into horizontal rows called periods and vertical columns called groups. There are seven periods, corresponding to the filling of the seven principal electron shells."
+        }
+      ],
+      "body": "## The Modern Periodic Table\n\nThe periodic table is organized into **periods** (horizontal rows) and **groups** (vertical columns).\n\n- Seven periods correspond to the seven principal electron shells\n- Elements in the same group share valence-electron counts and chemical behaviour"
+    },
+    {
+      "id": "blk-002",
+      "type": "narration",
+      "title": "Listening: Periodic trends",
+      "citations": [
+        {
+          "sourceChunkId": "9",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 7",
+          "excerpt": "Atomic Radius: Decreases across a period (left to right) because the increasing nuclear charge pulls electrons closer. It increases down a group because new shells are added."
+        }
+      ],
+      "text": "As we move across a period from left to right, the atomic radius decreases, because the growing nuclear charge pulls the electrons closer. Moving down a group, new shells are added and the radius increases.",
+      "audioRef": {
+        "ref": "asset://audio/blk-002-narration",
+        "transferSize": 412000
+      }
+    },
+    {
+      "id": "blk-003",
+      "type": "quiz",
+      "title": "Check your understanding",
+      "citations": [
+        {
+          "sourceChunkId": "7",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 5",
+          "excerpt": "The Atomic Number is the number of protons in the nucleus of an atom. It is the fundamental property that defines an element."
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-001",
+          "type": "multipleChoice",
+          "prompt": "What property orders the elements in the modern periodic table?",
+          "options": [
+            { "id": "o-a", "text": "Atomic mass" },
+            { "id": "o-b", "text": "Atomic number" },
+            { "id": "o-c", "text": "Number of neutrons" }
+          ],
+          "correctOptionId": "o-b",
+          "feedback": "Moseley showed the elements should be ordered by atomic number — the number of protons — not atomic mass."
+        },
+        {
+          "id": "q-002",
+          "type": "shortAnswer",
+          "prompt": "What are the horizontal rows of the periodic table called?",
+          "acceptedAnswers": ["periods", "period"],
+          "feedback": "The horizontal rows are called periods; the vertical columns are groups."
+        }
+      ]
+    },
+    {
+      "id": "blk-004",
+      "type": "diagram",
+      "title": "Blocks of the periodic table",
+      "citations": [
+        {
+          "sourceChunkId": "8",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 6",
+          "excerpt": "The table is further divided into blocks based on orbital filling: s-block: Groups 1 and 2 (and Helium). p-block: Groups 13 to 18. d-block: Transition metals (Groups 3 to 12)."
+        }
+      ],
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 200\" role=\"img\" aria-label=\"Blocks of the periodic table\"><title>Blocks of the periodic table</title><desc>Four labelled regions showing the s, p, d and f blocks.</desc><rect x=\"10\" y=\"10\" width=\"80\" height=\"120\" fill=\"#cde\"/><text x=\"30\" y=\"70\" font-size=\"16\">s</text><rect x=\"250\" y=\"10\" width=\"140\" height=\"120\" fill=\"#dec\"/><text x=\"310\" y=\"70\" font-size=\"16\">p</text><rect x=\"100\" y=\"40\" width=\"140\" height=\"90\" fill=\"#edc\"/><text x=\"160\" y=\"90\" font-size=\"16\">d</text><rect x=\"60\" y=\"150\" width=\"220\" height=\"40\" fill=\"#dce\"/><text x=\"160\" y=\"175\" font-size=\"16\">f</text></svg>",
+      "altText": "Diagram of the periodic table divided into s, p, d and f blocks.",
+      "longDescription": "The s-block covers Groups 1 and 2 plus Helium; the p-block covers Groups 13 to 18; the d-block covers the transition metals in Groups 3 to 12; the f-block holds the lanthanides and actinides below the main table.",
+      "caption": "The four orbital-filling blocks of the periodic table."
+    },
+    {
+      "id": "blk-005",
+      "type": "model3d",
+      "title": "Sodium chloride crystal lattice",
+      "citations": [
+        {
+          "sourceChunkId": "9",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 7",
+          "excerpt": "Ionic compounds do not exist as discrete molecules but as giant three-dimensional crystal lattices."
+        }
+      ],
+      "modelRef": {
+        "ref": "asset://models/nacl-lattice",
+        "transferSize": 4200000
+      },
+      "poster": {
+        "image": {
+          "ref": "asset://posters/blk-005-nacl",
+          "transferSize": 82000
+        },
+        "altText": "A cubic sodium chloride crystal lattice with alternating sodium and chloride ions.",
+        "longDescription": "Alternating sodium cations and chloride anions arranged in a repeating cubic lattice, each ion surrounded by six of the opposite charge.",
+        "caption": "The NaCl lattice: alternating Na+ and Cl− ions in a cubic arrangement."
+      },
+      "annotations": [
+        {
+          "number": 1,
+          "text": "Sodium cation (Na+) — lost one valence electron.",
+          "anchor": { "x": 0.5, "y": 0.5, "z": 0.5 }
+        },
+        {
+          "number": 2,
+          "text": "Chloride anion (Cl−) — gained one electron to complete its octet.",
+          "anchor": { "x": 1.5, "y": 0.5, "z": 0.5 }
+        }
+      ]
+    },
+    {
+      "id": "blk-006",
+      "type": "simulation",
+      "title": "Ionic bonding: electron transfer",
+      "citations": [
+        {
+          "sourceChunkId": "10",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 7",
+          "excerpt": "Ionic bonding is the electrostatic force of attraction between oppositely charged ions formed by the complete transfer of one or more electrons from a metal atom to a non-metal atom."
+        }
+      ],
+      "mode": "template",
+      "templateId": "electron-transfer-v1",
+      "name": "Electron transfer",
+      "params": [
+        {
+          "id": "electronCount",
+          "label": "Electrons transferred",
+          "type": "range",
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "default": 1
+        }
+      ],
+      "paramsDescription": "One slider controls how many electrons transfer from the metal atom to the non-metal atom (1 to 3). Transferring more electrons produces more strongly charged ions.",
+      "poster": {
+        "image": {
+          "ref": "asset://posters/blk-006-electron-transfer",
+          "transferSize": 64000
+        },
+        "altText": "A sodium atom transferring one electron to a chlorine atom.",
+        "caption": "Electron transfer between a metal and a non-metal forms oppositely charged ions."
+      }
+    }
+  ]
+}

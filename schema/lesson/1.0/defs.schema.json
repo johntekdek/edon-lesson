@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/defs.schema.json",
+  "title": "Lesson Script v1.0 — shared definitions",
+  "$defs": {
+    "assetRef": {
+      "description": "Heavy-asset reference. `transferSize` (bytes, compressed transfer size) is mandatory on every heavy-asset reference (AD-2): tap-to-load labels and the Constrained ceiling read only this field. Populated at assemble/freeze.",
+      "type": "object",
+      "required": ["ref", "transferSize"],
+      "properties": {
+        "ref": {
+          "type": "string",
+          "pattern": "^asset://"
+        },
+        "transferSize": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "citation": {
+      "description": "Per-Block provenance link to a Grounding Chunk. Required fields are the retrieval-guaranteed set only (AD-2); citation integrity inside immutable Published Versions rests on stored excerpt + documentTitle, never on id dereference back to edon-rag.",
+      "type": "object",
+      "required": ["sourceChunkId", "documentTitle", "excerpt"],
+      "properties": {
+        "sourceChunkId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "documentTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": ["string", "null"]
+        },
+        "documentId": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "poster": {
+      "description": "Poster image for heavy blocks (Model3D, Simulation). Required first-class data (FR-18): the poster is the instant first paint, the degraded-tier path, and the flag-off render. altText/longDescription per the stakeholder-approved text-alternative contract; caption is the one-line explanation that lets the poster stand alone pedagogically.",
+      "type": "object",
+      "required": ["image", "altText", "caption"],
+      "properties": {
+        "image": {
+          "$ref": "#/$defs/assetRef"
+        },
+        "altText": {
+          "type": "string",
+          "minLength": 1
+        },
+        "longDescription": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "blockBase": {
+      "description": "Base envelope every block satisfies, including unknown future types (minor forward-compat). `id` is the stable slot id minted at plan stage (AD-23) — citations, view marks, patches, and progress rows all key on it.",
+      "type": "object",
+      "required": ["id", "type", "title", "citations"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/citation"
+          }
+        }
+      }
+    }
+  }
+}

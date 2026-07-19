@@ -1,0 +1,30 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a03",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Narration Before Publish (no audio yet)",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "narration",
+      "title": "Isotopes",
+      "citations": [
+        {
+          "sourceChunkId": "7",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 5",
+          "excerpt": "Isotopes are atoms with the same atomic number but different mass numbers. For example, Hydrogen has three isotopes: Protium, Deuterium, and Tritium."
+        }
+      ],
+      "text": "Isotopes are atoms of the same element with the same atomic number but different mass numbers. Hydrogen, for example, has three isotopes: protium, deuterium, and tritium."
+    }
+  ]
+}

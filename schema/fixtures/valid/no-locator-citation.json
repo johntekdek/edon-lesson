@@ -1,0 +1,35 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a04",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Citation Fallback (locator-less sources)",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "Chemical bonding overview",
+      "citations": [
+        {
+          "sourceChunkId": "10",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "excerpt": "Covalent bonding involves the sharing of electron pairs between non-metal atoms."
+        },
+        {
+          "sourceChunkId": "12",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": null,
+          "excerpt": "Metallic bonding is described by the electron sea model, where a lattice of positive metal ions is immersed in a cloud of delocalized valence electrons."
+        }
+      ],
+      "body": "Chemical bonds form in three main ways: **ionic** (electron transfer), **covalent** (electron sharing), and **metallic** (delocalised electron sea)."
+    }
+  ]
+}

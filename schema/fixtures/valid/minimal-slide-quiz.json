@@ -1,0 +1,57 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a02",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "teacher"
+  },
+  "version": 1,
+  "title": "Atomic Number — Walking Skeleton",
+  "language": "en",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "Atomic number",
+      "citations": [
+        {
+          "sourceChunkId": "7",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 5",
+          "excerpt": "The Atomic Number is the number of protons in the nucleus of an atom. It is the fundamental property that defines an element."
+        }
+      ],
+      "body": "The **atomic number** is the number of protons in the nucleus. It defines the element."
+    },
+    {
+      "id": "blk-002",
+      "type": "quiz",
+      "title": "Quick check",
+      "citations": [
+        {
+          "sourceChunkId": "7",
+          "documentId": "3",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "locator": "Page 5",
+          "excerpt": "In a neutral atom, the atomic number also equals the number of electrons."
+        }
+      ],
+      "questions": [
+        {
+          "id": "q-001",
+          "type": "multipleChoice",
+          "prompt": "The atomic number counts which particle?",
+          "options": [
+            { "id": "o-a", "text": "Protons" },
+            { "id": "o-b", "text": "Neutrons" }
+          ],
+          "correctOptionId": "o-a",
+          "feedback": "The atomic number is the proton count; in a neutral atom it also equals the electron count."
+        }
+      ]
+    }
+  ]
+}

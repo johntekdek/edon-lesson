@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/narration.schema.json",
+  "title": "Narration Block payload",
+  "description": "text is the always-available transcript and the primary modality (A-9). audioRef is optional publish-time TTS audio (asset://) — Story 3.8 populates it; the field ships in v1.0.",
+  "type": "object",
+  "required": ["text"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audioRef": {
+      "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/assetRef"
+    }
+  }
+}

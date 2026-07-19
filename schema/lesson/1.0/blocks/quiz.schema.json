@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/quiz.schema.json",
+  "title": "Quiz Block payload",
+  "description": "Multiple-choice and short-answer questions (FR-15). Scoring is 1 point per question; fractions per AD-15. correctOptionId must reference an option id — JSON Schema cannot express that, so both validator wrappers enforce it inside validate() with identical semantics. acceptedAnswers are Teacher-editable (OQ-4); normalised matching happens in Player/server code, not schema.",
+  "type": "object",
+  "required": ["questions"],
+  "properties": {
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/question"
+      }
+    }
+  },
+  "$defs": {
+    "question": {
+      "type": "object",
+      "required": ["id", "type", "prompt", "feedback"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": ["multipleChoice", "shortAnswer"]
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "feedback": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "multipleChoice" } },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["options", "correctOptionId"],
+            "properties": {
+              "options": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "object",
+                  "required": ["id", "text"],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "correctOptionId": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "shortAnswer" } },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["acceptedAnswers"],
+            "properties": {
+              "acceptedAnswers": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b04",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Invalid: block missing its stable slot id",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "type": "slide",
+      "title": "No id on this block",
+      "citations": [],
+      "body": "The stable slot id (AD-23) is required on every block."
+    }
+  ]
+}

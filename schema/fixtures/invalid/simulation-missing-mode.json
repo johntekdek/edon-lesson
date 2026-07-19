@@ -1,0 +1,43 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b08",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Invalid: simulation block missing its mode discriminator",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "simulation",
+      "title": "Simulation without a mode",
+      "citations": [],
+      "templateId": "electron-transfer-v1",
+      "name": "Electron transfer",
+      "params": [
+        {
+          "id": "electronCount",
+          "label": "Electrons transferred",
+          "type": "range",
+          "min": 1,
+          "max": 3,
+          "step": 1,
+          "default": 1
+        }
+      ],
+      "paramsDescription": "One slider controls how many electrons transfer (1 to 3).",
+      "poster": {
+        "image": {
+          "ref": "asset://posters/sim-electron-transfer",
+          "transferSize": 64000
+        },
+        "altText": "A metal atom transferring an electron to a non-metal atom.",
+        "caption": "Electron transfer forms oppositely charged ions."
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a05",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 2,
+  "title": "Lesson With an Unknown Block Type",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "Known block",
+      "citations": [
+        {
+          "sourceChunkId": "8",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "excerpt": "Elements in the same group possess the same number of valence electrons and therefore exhibit similar chemical characteristics."
+        }
+      ],
+      "body": "Elements in the same group share valence-electron counts and behave similarly."
+    },
+    {
+      "id": "blk-002",
+      "type": "hologram",
+      "title": "A block type from the future",
+      "citations": [],
+      "hologramRef": {
+        "ref": "asset://holograms/periodic-table",
+        "transferSize": 900000
+      },
+      "projectionMode": "volumetric"
+    }
+  ]
+}

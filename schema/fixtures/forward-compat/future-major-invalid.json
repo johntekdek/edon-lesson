@@ -1,0 +1,13 @@
+{
+  "schema": "2.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a08",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 1,
+  "title": "Future Major AND Schema-Invalid (missing tenantId) — the major check short-circuits",
+  "language": "en-NG",
+  "blocks": []
+}

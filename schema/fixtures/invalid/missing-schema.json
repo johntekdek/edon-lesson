@@ -1,0 +1,13 @@
+{
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b01",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Invalid: missing schema version field",
+  "language": "en-NG",
+  "blocks": []
+}

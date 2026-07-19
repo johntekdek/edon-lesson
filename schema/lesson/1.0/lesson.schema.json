@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/lesson.schema.json",
+  "title": "Lesson Script v1.0",
+  "description": "The e-DON Lesson Studio content contract (AD-2). The `schema` field is pattern-validated ONLY — never const/enum — so future minor versions validate; the major-version comparison lives in the validator wrappers, pre-validation. Per-type block schemas never set additionalProperties: false — minor bumps add optional fields to known types.",
+  "type": "object",
+  "required": [
+    "schema",
+    "lessonId",
+    "tenantId",
+    "courseRef",
+    "curriculumRef",
+    "version",
+    "title",
+    "language",
+    "blocks"
+  ],
+  "properties": {
+    "schema": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "lessonId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tenantId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "courseRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "curriculumRef": {
+      "type": "object",
+      "required": ["value", "source"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "enum": ["pipeline", "teacher"]
+        }
+      }
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]+)*$"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/block"
+      }
+    }
+  },
+  "$defs": {
+    "block": {
+      "allOf": [
+        {
+          "$ref": "https://schema.edon.education/lesson/1.0/defs.schema.json#/$defs/blockBase"
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "slide" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/slide.schema.json"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "narration" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/narration.schema.json"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "quiz" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/quiz.schema.json"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "diagram" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/diagram.schema.json"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "model3d" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/model3d.schema.json"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "simulation" } },
+            "required": ["type"]
+          },
+          "then": {
+            "$ref": "https://schema.edon.education/lesson/1.0/blocks/simulation.schema.json"
+          }
+        }
+      ]
+    }
+  }
+}

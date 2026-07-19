@@ -1,0 +1,30 @@
+{
+  "schema": "1.0",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8b11",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 0,
+  "title": "Invalid: short-answer question with an empty acceptedAnswers list",
+  "language": "en-NG",
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "quiz",
+      "title": "Quiz with an unanswerable short-answer question",
+      "citations": [],
+      "questions": [
+        {
+          "id": "q-001",
+          "type": "shortAnswer",
+          "prompt": "What are the horizontal rows of the periodic table called?",
+          "acceptedAnswers": [],
+          "feedback": "The horizontal rows are called periods."
+        }
+      ]
+    }
+  ]
+}

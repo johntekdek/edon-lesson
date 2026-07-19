@@ -1,0 +1,21 @@
+{
+  "valid/full-six-block-lesson.json": "valid",
+  "valid/minimal-slide-quiz.json": "valid",
+  "valid/narration-no-audioref.json": "valid",
+  "valid/no-locator-citation.json": "valid",
+  "forward-compat/unknown-block-type.json": "valid",
+  "forward-compat/future-minor.json": "valid",
+  "forward-compat/future-major.json": "unsupportedMajor",
+  "forward-compat/future-major-invalid.json": "unsupportedMajor",
+  "invalid/missing-schema.json": "invalid",
+  "invalid/missing-tenant.json": "invalid",
+  "invalid/missing-version.json": "invalid",
+  "invalid/block-missing-id.json": "invalid",
+  "invalid/block-missing-citations.json": "invalid",
+  "invalid/block-missing-title.json": "invalid",
+  "invalid/citation-missing-excerpt.json": "invalid",
+  "invalid/simulation-missing-mode.json": "invalid",
+  "invalid/quiz-mc-missing-correct-option.json": "invalid",
+  "invalid/quiz-mc-dangling-correct-option.json": "invalid",
+  "invalid/quiz-short-answer-empty-accepted.json": "invalid"
+}

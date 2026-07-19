@@ -1,0 +1,7 @@
+{
+  "name": "edon-lesson",
+  "private": true,
+  "workspaces": [
+    "schema/js"
+  ]
+}

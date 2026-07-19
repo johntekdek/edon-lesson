@@ -1,0 +1,38 @@
+{
+  "schema": "1.7",
+  "lessonId": "0198c5b2-7a3e-7cc0-9f10-2b7f4d6e8a06",
+  "tenantId": "0198c5b2-0000-7cc0-9f10-aaaa4d6e8a55",
+  "courseRef": "course-che-111",
+  "curriculumRef": {
+    "value": "NCE Chemistry Year 1 — CHE 111 General Chemistry",
+    "source": "pipeline"
+  },
+  "version": 3,
+  "title": "Future Minor Version — Additive Fields and Types",
+  "language": "en-NG",
+  "readingTimeMinutes": 6,
+  "blocks": [
+    {
+      "id": "blk-001",
+      "type": "slide",
+      "title": "Known block with an unknown optional field",
+      "subtitle": "An optional field added by schema 1.7 — v1.0 consumers must tolerate it",
+      "citations": [
+        {
+          "sourceChunkId": "8",
+          "documentTitle": "CHE 111 General chemistry lecture note",
+          "excerpt": "The table was later refined by Henry Moseley, who used X-ray spectroscopy to show that the elements should be ordered by atomic number rather than atomic mass."
+        }
+      ],
+      "body": "Moseley reordered the periodic table by **atomic number**, resolving Mendeleev's anomalies."
+    },
+    {
+      "id": "blk-002",
+      "type": "callout",
+      "title": "A block type introduced after v1.0",
+      "citations": [],
+      "tone": "info",
+      "text": "Argon sits before potassium even though it is heavier — atomic number, not mass, orders the table."
+    }
+  ]
+}

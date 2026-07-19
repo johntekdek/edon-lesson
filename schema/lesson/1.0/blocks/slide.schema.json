@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.edon.education/lesson/1.0/blocks/slide.schema.json",
+  "title": "Slide Block payload",
+  "description": "body is a Markdown-subset string. Allowed constructs exactly: paragraphs, headings (##/###), bold, italic, ordered/unordered lists. Images, raw HTML, and links are forbidden; renderers strip/ignore disallowed constructs, never error. See /schema/docs/block-types.md.",
+  "type": "object",
+  "required": ["body"],
+  "properties": {
+    "body": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
