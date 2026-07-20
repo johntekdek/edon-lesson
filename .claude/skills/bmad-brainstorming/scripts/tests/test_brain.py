@@ -3,6 +3,7 @@
 # dependencies = ["pytest>=8.0"]
 # ///
 """Tests for brain.py. Run: uv run -m pytest scripts/tests/test_brain.py"""
+
 import sys
 from pathlib import Path
 
@@ -38,7 +39,11 @@ def test_load_normalizes_detail(lib):
 
 
 def test_categories_counts_sorted(lib):
-    assert brain.categories(brain.load(lib)) == [("collaborative", 1), ("structured", 1), ("wild", 2)]
+    assert brain.categories(brain.load(lib)) == [
+        ("collaborative", 1),
+        ("structured", 1),
+        ("wild", 2),
+    ]
 
 
 def test_filter_is_case_insensitive(lib):
@@ -111,6 +116,7 @@ def test_list_all_dumps_everything(lib, capsys):
 
 def test_json_output(lib, capsys):
     import json
+
     brain.main(["--file", str(lib), "--json", "categories"])
     data = json.loads(capsys.readouterr().out)
     assert {"category": "wild", "count": 2} in data
@@ -134,6 +140,7 @@ def test_missing_file_returns_2(tmp_path):
 
 
 # --- html selection page ------------------------------------------------
+
 
 def test_html_requires_out(lib, capsys):
     # never dump the catalog to stdout — writing to a file is the whole point
@@ -163,7 +170,8 @@ def test_html_creates_missing_parent(lib, tmp_path):
 EXTRA = (
     '[{"category": "domain-specific", "technique_name": "Regulatory Inversion", '
     '"description": "Start from the compliance constraint and brainstorm what it unlocks."}, '
-    '{"category": "wild", "technique_name": "Extra Wild One", "description": "An added wild method."}]'
+    '{"category": "wild", "technique_name": "Extra Wild One", '
+    '"description": "An added wild method."}]'
 )
 
 
@@ -190,13 +198,16 @@ def test_extra_is_first_class_in_html(lib, extra, tmp_path):
     out = tmp_path / "sel.html"
     assert brain.main(["--file", str(lib), "--extra", str(extra), "html", "--out", str(out)]) == 0
     doc = out.read_text(encoding="utf-8")
-    # custom technique is selectable and its new category renders without crashing (fallback glyph/hue)
+    # custom technique is selectable and its new category renders without
+    # crashing (fallback glyph/hue)
     assert "Regulatory Inversion" in doc
     assert "Domain Specific" in doc
 
 
 def test_extra_missing_file_returns_2(lib, tmp_path):
-    assert brain.main(["--file", str(lib), "--extra", str(tmp_path / "nope.json"), "categories"]) == 2
+    assert (
+        brain.main(["--file", str(lib), "--extra", str(tmp_path / "nope.json"), "categories"]) == 2
+    )
 
 
 def test_unknown_category_style_uses_fallback_glyph():

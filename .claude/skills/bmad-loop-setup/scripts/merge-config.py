@@ -27,6 +27,7 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:
+    print("Error: pyyaml is required (PEP 723 dependency)", file=sys.stderr)
     sys.exit(2)
 
 
@@ -114,7 +115,7 @@ def load_legacy_values(
             if k in _CORE_KEYS:
                 legacy_core[k] = v
         if verbose:
-            pass
+            print(f"Legacy core config: {list(legacy_core.keys())}", file=sys.stderr)
 
     # Read module legacy config
     mod_path = Path(legacy_dir) / module_code / "config.yaml"
@@ -130,7 +131,7 @@ def load_legacy_values(
                 # Module-specific key that matches a current variable definition
                 legacy_module[k] = v
         if verbose:
-            pass
+            print(f"Legacy module config: {list(legacy_module.keys())}", file=sys.stderr)
 
     return legacy_core, legacy_module, files_found
 
@@ -168,7 +169,7 @@ def cleanup_legacy_configs(legacy_dir: str, module_code: str, verbose: bool = Fa
         legacy_path = Path(legacy_dir) / subdir / "config.yaml"
         if legacy_path.exists():
             if verbose:
-                pass
+                print(f"Deleting legacy config: {legacy_path}", file=sys.stderr)
             legacy_path.unlink()
             deleted.append(str(legacy_path))
     return deleted
@@ -201,7 +202,10 @@ def apply_result_templates(module_yaml: dict, module_answers: dict, verbose: boo
             template = var_def["result"]
             transformed[key] = template.replace("{value}", str(value))
             if verbose:
-                pass
+                print(
+                    f"Applied result template for '{key}': {value} → {transformed[key]}",
+                    file=sys.stderr,
+                )
         else:
             transformed[key] = value
     return transformed
@@ -228,19 +232,23 @@ def merge_config(
     module_code = module_yaml.get("code")
 
     if not module_code:
+        print("Error: module.yaml must have a 'code' field", file=sys.stderr)
         sys.exit(1)
 
     # Migrate legacy core: section to root
     if "core" in config and isinstance(config["core"], dict):
         if verbose:
-            pass
+            print("Migrating legacy 'core' section to root", file=sys.stderr)
         config.update(config.pop("core"))
 
     # Strip user-only keys from config — they belong exclusively in config.user.yaml
     for key in _CORE_USER_KEYS:
         if key in config:
             if verbose:
-                pass
+                print(
+                    f"Removing user-only key '{key}' from config (belongs in config.user.yaml)",
+                    file=sys.stderr,
+                )
             del config[key]
 
     # Write core values at root (global properties, not nested under "core")
@@ -250,13 +258,19 @@ def merge_config(
         shared_core = {k: v for k, v in core_answers.items() if k not in _CORE_USER_KEYS}
         if shared_core:
             if verbose:
-                pass
+                print(
+                    f"Writing core config at root: {list(shared_core.keys())}",
+                    file=sys.stderr,
+                )
             config.update(shared_core)
 
     # Anti-zombie: remove existing module section
     if module_code in config:
         if verbose:
-            pass
+            print(
+                f"Removing existing '{module_code}' section (anti-zombie)",
+                file=sys.stderr,
+            )
         del config[module_code]
 
     # Build module section: metadata + variable values
@@ -265,7 +279,10 @@ def merge_config(
     module_section.update(module_answers)
 
     if verbose:
-        pass
+        print(
+            f"Writing '{module_code}' section with keys: {list(module_section.keys())}",
+            file=sys.stderr,
+        )
 
     config[module_code] = module_section
 
@@ -304,7 +321,7 @@ def write_config(config: dict, config_path: str, verbose: bool = False) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
     if verbose:
-        pass
+        print(f"Writing config to {path}", file=sys.stderr)
 
     with open(path, "w", encoding="utf-8") as f:
         yaml.dump(
@@ -322,8 +339,22 @@ def reject_unresolved_paths(named_paths: list[tuple[str, str]]) -> None:
     values; filesystem path arguments must be resolved by the caller. Failing
     loudly here prevents silently creating a junk ``{project-root}/`` directory.
     """
-    for _name, value in named_paths:
+    for name, value in named_paths:
         if value and "{project-root}" in value:
+            print(
+                json.dumps(
+                    {
+                        "status": "error",
+                        "error": (
+                            f"Unresolved '{{project-root}}' token in {name} path: {value!r}. "
+                            "Resolve '{project-root}' to the actual project root before running "
+                            "this script — it is a filesystem path, not a config value."
+                        ),
+                    },
+                    indent=2,
+                ),
+                file=sys.stderr,
+            )
             sys.exit(1)
 
 
@@ -341,6 +372,10 @@ def main():
     # Load inputs
     module_yaml = load_yaml_file(args.module_yaml)
     if not module_yaml:
+        print(
+            f"Error: Could not load module.yaml from {args.module_yaml}",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     answers = load_json_file(args.answers)
@@ -348,8 +383,9 @@ def main():
 
     if args.verbose:
         exists = Path(args.config_path).exists()
+        print(f"Config file exists: {exists}", file=sys.stderr)
         if exists:
-            pass
+            print(f"Existing sections: {list(existing_config.keys())}", file=sys.stderr)
 
     # Legacy migration: read old per-module configs as fallback defaults
     legacy_files_found = []
@@ -361,7 +397,7 @@ def main():
         if legacy_core or legacy_module:
             answers = apply_legacy_defaults(answers, legacy_core, legacy_module)
             if args.verbose:
-                pass
+                print("Applied legacy values as fallback defaults", file=sys.stderr)
 
     # Merge and write config.yaml
     updated_config = merge_config(existing_config, module_yaml, answers, args.verbose)
@@ -382,7 +418,7 @@ def main():
 
     # Output result summary as JSON
     module_code = module_yaml["code"]
-    {
+    result = {
         "status": "success",
         "config_path": str(Path(args.config_path).resolve()),
         "user_config_path": str(Path(args.user_config_path).resolve()),
@@ -393,6 +429,7 @@ def main():
         "legacy_configs_found": legacy_files_found,
         "legacy_configs_deleted": legacy_deleted,
     }
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":

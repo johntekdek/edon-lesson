@@ -18,3 +18,6 @@ select = ["E", "F", "W", "I", "UP", "B", "T20"]
 # Story 1.1 package: the over-length lines are cross-language parity-critical error
 # message strings (asserted byte-identical against the js wrapper) — not rewrappable.
 "schema/py/**" = ["E501"]
+# Vendored BMAD skill scripts are stdout/stderr CLIs — printed output is their
+# contract (their test suites assert on it), so the no-bare-print rule doesn't apply.
+".claude/skills/**" = ["T201"]

@@ -29,6 +29,7 @@ produced.
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
 import tomllib
@@ -142,9 +143,7 @@ def scan_skills(
             # both. Emit one entry per surface so the caller can group cleanly.
             surfaces_found = [k for k in SURFACE_KEYS if k in data]
             if not surfaces_found:
-                errors.append(
-                    f"no [agent] or [workflow] block in {customize_toml}"
-                )
+                errors.append(f"no [agent] or [workflow] block in {customize_toml}")
                 continue
             for surface in surfaces_found:
                 entry = dict(entry_base)
@@ -203,12 +202,14 @@ def main(argv: list[str]) -> int:
     args = parse_args(argv)
     project_root = Path(args.project_root).expanduser().resolve()
     if not project_root.is_dir():
+        print(
+            f"error: project-root does not exist or is not a directory: {project_root}",
+            file=sys.stderr,
+        )
         return 2
 
     primary = (
-        Path(args.skills_root).expanduser().resolve()
-        if args.skills_root
-        else default_skills_root()
+        Path(args.skills_root).expanduser().resolve() if args.skills_root else default_skills_root()
     )
     extras = [Path(p).expanduser().resolve() for p in args.extra_root]
     # Deduplicate in order of appearance.
@@ -217,7 +218,8 @@ def main(argv: list[str]) -> int:
         if root not in roots:
             roots.append(root)
 
-    scan_skills(roots, project_root)
+    result = scan_skills(roots, project_root)
+    print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
 

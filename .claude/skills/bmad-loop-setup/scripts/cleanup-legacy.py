@@ -19,6 +19,7 @@ Exit codes: 0=success (including nothing to remove), 1=validation error, 2=runti
 """
 
 import argparse
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -100,7 +101,10 @@ def verify_skills_installed(
         skill_names = find_skill_dirs(str(legacy_path))
         if not skill_names:
             if verbose:
-                pass
+                print(
+                    f"No skills found in {dirname}/ — skipping verification",
+                    file=sys.stderr,
+                )
             continue
 
         for skill_name in skill_names:
@@ -108,19 +112,26 @@ def verify_skills_installed(
             if installed_path.is_dir():
                 all_verified.append(skill_name)
                 if verbose:
-                    pass
+                    print(
+                        f"Verified: {skill_name} exists at {installed_path}",
+                        file=sys.stderr,
+                    )
             else:
                 missing.append(skill_name)
                 if verbose:
-                    pass
+                    print(
+                        f"MISSING: {skill_name} not found at {installed_path}",
+                        file=sys.stderr,
+                    )
 
     if missing:
-        {
+        error_result = {
             "status": "error",
             "error": "Skills not found at installed location",
             "missing_skills": missing,
             "skills_dir": str(Path(skills_dir).resolve()),
         }
+        print(json.dumps(error_result, indent=2))
         sys.exit(1)
 
     return sorted(set(all_verified))
@@ -150,22 +161,32 @@ def cleanup_directories(bmad_dir: str, dirs_to_remove: list, verbose: bool = Fal
         if not target.exists():
             not_found.append(dirname)
             if verbose:
-                pass
+                print(f"Not found (skipping): {target}", file=sys.stderr)
             continue
 
         if not target.is_dir():
             if verbose:
-                pass
+                print(f"Not a directory (skipping): {target}", file=sys.stderr)
             not_found.append(dirname)
             continue
 
         file_count = count_files(target)
         if verbose:
-            pass
+            print(
+                f"Removing {target} ({file_count} files)",
+                file=sys.stderr,
+            )
 
         try:
             shutil.rmtree(target)
-        except OSError:
+        except OSError as e:
+            error_result = {
+                "status": "error",
+                "error": f"Failed to remove {target}: {e}",
+                "directories_removed": removed,
+                "directories_failed": dirname,
+            }
+            print(json.dumps(error_result, indent=2))
             sys.exit(2)
 
         removed.append(dirname)
@@ -180,8 +201,21 @@ def reject_unresolved_paths(named_paths: list[tuple[str, str]]) -> None:
     values; filesystem path arguments must be resolved by the caller. Failing
     loudly here prevents silently operating on a junk ``{project-root}/`` directory.
     """
-    for _name, value in named_paths:
+    for name, value in named_paths:
         if value and "{project-root}" in value:
+            print(
+                json.dumps(
+                    {
+                        "status": "error",
+                        "error": (
+                            f"Unresolved '{{project-root}}' token in {name} path: {value!r}. "
+                            "Resolve '{project-root}' to the actual project root before running "
+                            "this script — it is a filesystem path, not a config value."
+                        ),
+                    },
+                    indent=2,
+                )
+            )
             sys.exit(1)
 
 
@@ -205,13 +239,16 @@ def main():
     dirs_to_remove = unique_dirs
 
     if args.verbose:
-        pass
+        print(f"Directories to remove: {dirs_to_remove}", file=sys.stderr)
 
     # Safety check: verify skills are installed before removing
     verified_skills = None
     if args.skills_dir:
         if args.verbose:
-            pass
+            print(
+                f"Verifying skills installed at {args.skills_dir}",
+                file=sys.stderr,
+            )
         verified_skills = verify_skills_installed(
             bmad_dir, dirs_to_remove, args.skills_dir, args.verbose
         )
@@ -237,6 +274,7 @@ def main():
     else:
         result["safety_checks"] = None
 
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
